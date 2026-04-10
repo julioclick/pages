@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capacitação em IA — IVORY.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --azul:    #003D5B;
+      --creme:   #FFEEC2;
+      --laranja: #F35B04;
+      --branco:  #FFFFFF;
+      --preto:   #1A1A1A;
+      --cinza:   #6B7280;
+      --azul-meio: #0a5a80;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--branco);
+      color: var(--preto);
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(0,61,91,0.97);
+      backdrop-filter: blur(12px);
+      padding: 0 64px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: var(--branco);
+    }
+
+    .nav-logo span { color: var(--laranja); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: var(--branco); }
+
+    .nav-cta {
+      background: var(--laranja);
+      color: var(--branco) !important;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-weight: 700 !important;
+      font-size: 13px !important;
+      transition: opacity .2s !important;
+    }
+
+    .nav-cta:hover { opacity: .85; }
+
+    /* ── HERO ───────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      background: var(--azul);
+      display: flex;
+      align-items: center;
+      padding: 120px 64px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-orb-1 {
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(243,91,4,0.22) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-orb-2 {
+      position: absolute;
+      bottom: -150px; left: -150px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,238,194,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(243,91,4,0.15);
+      border: 1px solid rgba(243,91,4,0.3);
+      color: var(--laranja);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 30px;
+      margin-bottom: 28px;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--laranja);
+    }
+
+    .hero-titulo {
+      font-size: 58px;
+      font-weight: 900;
+      color: var(--branco);
+      line-height: 1.05;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+    }
+
+    .hero-titulo em {
+      font-style: normal;
+      color: var(--creme);
+    }
+
+    .hero-titulo .destaque {
+      color: var(--laranja);
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.8;
+      max-width: 520px;
+      margin-bottom: 44px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--laranja);
+      color: var(--branco);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 8px 32px rgba(243,91,4,0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(243,91,4,0.5);
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      padding: 16px 24px;
+      transition: color .2s;
+    }
+
+    .btn-ghost:hover { color: var(--branco); }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      margin-top: 52px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .hero-stat-numero {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--creme);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .hero-stat-label {
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.4;
+    }
+
+    /* Card hero */
+    .hero-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 36px 32px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-card-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 20px;
+    }
+
+    .hero-card-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .hero-card-item:last-child { border-bottom: none; }
+
+    .hero-card-icone {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .hero-card-titulo {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--creme);
+      margin-bottom: 2px;
+    }
+
+    .hero-card-desc {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.5;
+    }
+
+    .hero-card-preco {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+
+    .hero-card-preco .label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 6px;
+    }
+
+    .hero-card-preco .valor {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 2px;
+    }
+
+    .hero-card-preco .valor strong {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--branco);
+    }
+
+    /* ── CLIENTES ───────────────────────────────────────────── */
+    .clientes {
+      background: var(--creme);
+      padding: 52px 64px;
+      text-align: center;
+    }
+
+    .clientes-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(0,61,91,0.4);
+      margin-bottom: 28px;
+    }
+
+    .clientes-logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .cliente-nome {
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(0,61,91,0.45);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+
+    .cliente-nome:hover { color: var(--azul); }
+
+    .cliente-sep {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(0,61,91,0.2);
+    }
+
+    /* ── SEÇÃO BASE ─────────────────────────────────────────── */
+    .section {
+      padding: 100px 64px;
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 14px;
+    }
+
+    .section-titulo {
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--azul);
+      line-height: 1.15;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--cinza);
+      max-width: 600px;
+      line-height: 1.8;
+    }
+
+    /* ── POR QUE AGORA ──────────────────────────────────────── */
+    .porque {
+      background: var(--branco);
+    }
+
+    .porque-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 64px;
+      align-items: start;
+    }
+
+    .porque-texto p {
+      font-size: 15px;
+      font-weight: 400;
+      color: #444;
+      line-height: 1.9;
+      margin-bottom: 20px;
+    }
+
+    .porque-texto p strong {
+      color: var(--azul);
+      font-weight: 700;
+    }
+
+    .porque-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .porque-card {
+      background: var(--creme);
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .porque-icone {
+      font-size: 28px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .porque-card-titulo {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--azul);
+      margin-bottom: 6px;
+    }
+
+    .porque-card-desc {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--cinza);
+      line-height: 1.6;
+    }
+
+    /* ── CURSOS ─────────────────────────────────────────────── */
+    .cursos {
+      background: var(--azul);
+      padding: 100px 64px;
+    }
+
+    .cursos .section-titulo { color: var(--branco); }
+    .cursos .section-sub { color: rgba(255,255,255,0.6); }
+
+    .cursos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 56px;
+    }
+
+    .curso-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      overflow: hidden;
+      transition: transform .3s, border-color .3s;
+    }
+
+    .curso-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(243,91,4,0.4);
+    }
+
+    .curso-topo {
+      padding: 36px 36px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .curso-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .badge-negocio {
+      background: rgba(243,91,4,0.2);
+      color: var(--laranja);
+      border: 1px solid rgba(243,91,4,0.3);
+    }
+
+    .badge-ti {
+      background: rgba(255,238,194,0.15);
+      color: var(--creme);
+      border: 1px solid rgba(255,238,194,0.2);
+    }
+
+    .curso-nome {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--branco);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .curso-promessa {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+    }
+
+    .curso-corpo {
+      padding: 28px 36px 36px;
+    }
+
+    .curso-publico-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 12px;
+    }
+
+    .curso-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .curso-tag {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.8);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 5px 14px;
+      border-radius: 20px;
+    }
+
+    .curso-dores-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 12px;
+    }
+
+    .curso-dores {
+      list-style: none;
+    }
+
+    .curso-dores li {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.65);
+      padding: 8px 0;
+      padding-left: 20px;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      line-height: 1.5;
+    }
+
+    .curso-dores li:last-child { border-bottom: none; }
+
+    .curso-dores li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--laranja);
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .curso-preco-box {
+      margin-top: 24px;
+      padding: 20px 24px;
+      background: rgba(243,91,4,0.12);
+      border: 1px solid rgba(243,91,4,0.25);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .curso-preco-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2px;
+    }
+
+    .curso-preco-valor {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--branco);
+    }
+
+    .curso-preco-detalhe {
+      font-size: 11px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.4);
+      text-align: right;
+    }
+
+    /* ── INCLUSO ────────────────────────────────────────────── */
+    .incluso {
+      background: var(--creme);
+    }
+
+    .incluso-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+
+    .incluso-item {
+      background: var(--branco);
+      border-radius: 20px;
+      padding: 32px 28px;
+      border: 1px solid rgba(0,61,91,0.08);
+      transition: transform .3s, box-shadow .3s;
+    }
+
+    .incluso-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,61,91,0.1);
+    }
+
+    .incluso-icone {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--azul);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .incluso-titulo {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+
+    .incluso-desc {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--cinza);
+      line-height: 1.7;
+    }
+
+    /* Destaque sessão especial */
+    .sessao-especial {
+      grid-column: 1 / -1;
+      background: var(--azul);
+      border-radius: 20px;
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .sessao-especial-icone {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: var(--laranja);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .sessao-especial-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 6px;
+    }
+
+    .sessao-especial-titulo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--branco);
+      margin-bottom: 6px;
+    }
+
+    .sessao-especial-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+    }
+
+    /* ── COMO FUNCIONA ──────────────────────────────────────── */
+    .como {
+      background: var(--branco);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 64px;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: calc(12.5% + 0px);
+      right: calc(12.5% + 0px);
+      height: 2px;
+      background: linear-gradient(to right, var(--azul), var(--laranja));
+      z-index: 0;
+    }
+
+    .step {
+      text-align: center;
+      padding: 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-dot {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--azul);
+      border: 4px solid var(--branco);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 0 2px var(--azul);
+    }
+
+    .step:last-child .step-dot {
+      background: var(--laranja);
+      box-shadow: 0 0 0 2px var(--laranja);
+    }
+
+    .step-num {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 6px;
+    }
+
+    .step-titulo {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--azul);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .step-desc {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--cinza);
+      line-height: 1.6;
+    }
+
+    /* ── PRECIFICAÇÃO ───────────────────────────────────────── */
+    .preco {
+      background: var(--creme);
+    }
+
+    .preco-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 20px;
+      margin-top: 56px;
+      align-items: start;
+    }
+
+    .preco-card {
+      background: var(--branco);
+      border-radius: 24px;
+      padding: 36px 32px;
+      border: 1px solid rgba(0,61,91,0.1);
+      position: relative;
+      transition: transform .3s, box-shadow .3s;
+    }
+
+    .preco-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,61,91,0.1);
+    }
+
+    .preco-card.destaque {
+      background: var(--azul);
+      border-color: var(--azul);
+      transform: scale(1.03);
+    }
+
+    .preco-card.destaque:hover {
+      transform: scale(1.03) translateY(-4px);
+    }
+
+    .preco-popular {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--laranja);
+      color: var(--branco);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .preco-nome {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--cinza);
+      margin-bottom: 20px;
+    }
+
+    .preco-card.destaque .preco-nome { color: rgba(255,255,255,0.5); }
+
+    .preco-de {
+      font-size: 13px;
+      font-weight: 400;
+      color: #aaa;
+      text-decoration: line-through;
+      margin-bottom: 4px;
+    }
+
+    .preco-valor {
+      font-size: 40px;
+      font-weight: 900;
+      color: var(--azul);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .preco-card.destaque .preco-valor { color: var(--branco); }
+
+    .preco-detalhe {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--cinza);
+      margin-bottom: 24px;
+    }
+
+    .preco-card.destaque .preco-detalhe { color: rgba(255,255,255,0.5); }
+
+    .preco-divider {
+      height: 1px;
+      background: rgba(0,61,91,0.08);
+      margin-bottom: 24px;
+    }
+
+    .preco-card.destaque .preco-divider { background: rgba(255,255,255,0.1); }
+
+    .preco-lista {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .preco-lista li {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--preto);
+      padding: 6px 0;
+      padding-left: 22px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .preco-lista li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--laranja);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .preco-card.destaque .preco-lista li { color: rgba(255,255,255,0.75); }
+
+    .btn-preco {
+      display: block;
+      text-align: center;
+      padding: 14px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all .2s;
+    }
+
+    .btn-preco-outline {
+      border: 2px solid rgba(0,61,91,0.2);
+      color: var(--azul);
+    }
+
+    .btn-preco-outline:hover {
+      border-color: var(--azul);
+      background: var(--azul);
+      color: var(--branco);
+    }
+
+    .btn-preco-solid {
+      background: var(--laranja);
+      color: var(--branco);
+      box-shadow: 0 6px 24px rgba(243,91,4,0.35);
+    }
+
+    .btn-preco-solid:hover {
+      box-shadow: 0 8px 32px rgba(243,91,4,0.5);
+      transform: translateY(-1px);
+    }
+
+    .preco-nota {
+      margin-top: 32px;
+      background: rgba(0,61,91,0.05);
+      border-left: 3px solid var(--azul);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--cinza);
+      line-height: 1.7;
+    }
+
+    .preco-nota strong { color: var(--azul); font-weight: 700; }
+
+    /* ── FORMULÁRIO ─────────────────────────────────────────── */
+    .formulario {
+      background: var(--branco);
+      padding: 100px 64px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .form-left .section-label { margin-bottom: 14px; }
+    .form-left .section-titulo { margin-bottom: 16px; }
+
+    .form-aviso {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--creme);
+      border-left: 3px solid var(--laranja);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+      margin: 28px 0 32px;
+    }
+
+    .form-aviso-icone { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+    .form-aviso-texto {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--azul);
+      line-height: 1.6;
+    }
+
+    .form-aviso-texto span {
+      font-weight: 700;
+      color: var(--laranja);
+    }
+
+    .form-beneficios { list-style: none; }
+
+    .form-beneficios li {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--cinza);
+      padding: 10px 0;
+      padding-left: 24px;
+      position: relative;
+      border-bottom: 1px solid rgba(0,61,91,0.06);
+      line-height: 1.5;
+    }
+
+    .form-beneficios li:last-child { border-bottom: none; }
+
+    .form-beneficios li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--laranja);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .form-box {
+      background: var(--azul);
+      border-radius: 24px;
+      padding: 40px 40px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-box::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(243,91,4,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .form-box-titulo {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--branco);
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-box-sub {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 32px;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--branco);
+      outline: none;
+      transition: border-color .2s, background .2s;
+      -webkit-appearance: none;
+    }
+
+    .form-group input::placeholder { color: rgba(255,255,255,0.3); }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--laranja);
+      background: rgba(255,255,255,0.12);
+    }
+
+    .form-group select option { background: var(--azul); color: var(--branco); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-submit {
+      width: 100%;
+      background: var(--laranja);
+      color: var(--branco);
+      border: none;
+      border-radius: 50px;
+      padding: 16px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all .2s;
+      box-shadow: 0 6px 24px rgba(243,91,4,0.4);
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(243,91,4,0.5);
+    }
+
+    .form-disclaimer {
+      font-size: 11px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.35);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-sucesso {
+      display: none;
+      text-align: center;
+      padding: 32px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-sucesso-icone { font-size: 48px; margin-bottom: 16px; }
+
+    .form-sucesso-titulo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--branco);
+      margin-bottom: 10px;
+    }
+
+    .form-sucesso-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid { grid-template-columns: 1fr; gap: 40px; }
+      .formulario { padding: 64px 24px; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-box { padding: 28px 24px 32px; }
+    }
+
+    /* ── CTA FINAL ──────────────────────────────────────────── */
+    .cta-final {
+      background: var(--azul);
+      padding: 100px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-final::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px; height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(243,91,4,0.15) 0%, transparent 65%);
+    }
+
+    .cta-final-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .cta-final-tag {
+      display: inline-block;
+      background: rgba(243,91,4,0.15);
+      border: 1px solid rgba(243,91,4,0.3);
+      color: var(--laranja);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 30px;
+      margin-bottom: 28px;
+    }
+
+    .cta-final-titulo {
+      font-size: 44px;
+      font-weight: 900;
+      color: var(--branco);
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .cta-final-titulo em {
+      font-style: normal;
+      color: var(--creme);
+    }
+
+    .cta-final-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.8;
+      margin-bottom: 44px;
+    }
+
+    .cta-final-btns {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-cta-lg {
+      display: inline-block;
+      background: var(--laranja);
+      color: var(--branco);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 18px 48px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 8px 32px rgba(243,91,4,0.4);
+      transition: all .2s;
+    }
+
+    .btn-cta-lg:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 48px rgba(243,91,4,0.55);
+    }
+
+    .btn-ghost-lg {
+      display: inline-block;
+      border: 2px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.8);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 18px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all .2s;
+    }
+
+    .btn-ghost-lg:hover {
+      border-color: rgba(255,255,255,0.5);
+      color: var(--branco);
+    }
+
+    /* ── RODAPÉ ─────────────────────────────────────────────── */
+    footer {
+      background: #001e2e;
+      padding: 40px 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: var(--branco);
+    }
+
+    .footer-logo span { color: var(--laranja); }
+
+    .footer-info {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.3);
+      text-align: right;
+      line-height: 1.7;
+    }
+
+    .footer-info a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+    }
+
+    /* ── RESPONSIVE BÁSICO ──────────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .hero { padding: 100px 24px 60px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+      .hero-titulo { font-size: 38px; }
+      .hero-card { display: none; }
+      .section { padding: 64px 24px; }
+      .porque-grid { grid-template-columns: 1fr; }
+      .cursos { padding: 64px 24px; }
+      .cursos-grid { grid-template-columns: 1fr; }
+      .incluso-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .steps::before { display: none; }
+      .preco-grid { grid-template-columns: 1fr; }
+      .preco-card.destaque { transform: none; }
+      .clientes { padding: 40px 24px; }
+      .cta-final { padding: 64px 24px; }
+      .cta-final-titulo { font-size: 32px; }
+      footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+      .footer-info { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">IVORY<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#cursos">Os cursos</a></li>
+    <li><a href="#incluso">O que está incluso</a></li>
+    <li><a href="#como-funciona">Como funciona</a></li>
+    <li><a href="#preco">Investimento</a></li>
+    <li><a href="#contato" class="nav-cta">Solicitar proposta</a></li>
+
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb-1"></div>
+  <div class="hero-orb-2"></div>
+  <div class="hero-grid">
+    <div>
+      <div class="hero-tag">Capacitação corporativa em IA</div>
+      <h1 class="hero-titulo">
+        Seu time usando IA<br>
+        na prática.<br>
+        <em>Em dois dias.</em>
+      </h1>
+      <p class="hero-sub">Treinamentos fechados de inteligência artificial para líderes de negócio e times de TI. Ao vivo, exclusivo para sua empresa, com casos reais de quem já entregou projetos de IA para Vale, Eletrobras, Globo e MRS.</p>
+      <div class="hero-btns">
+        <a href="#contato" class="btn-primary">Solicitar proposta</a>
+        <a href="#cursos" class="btn-ghost">Ver os cursos →</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-numero">10+</div>
+          <div class="hero-stat-label">grandes empresas<br>atendidas</div>
+        </div>
+        <div>
+          <div class="hero-stat-numero">100%</div>
+          <div class="hero-stat-label">turmas fechadas<br>por empresa</div>
+        </div>
+        <div>
+          <div class="hero-stat-numero">2 dias</div>
+          <div class="hero-stat-label">para seu time<br>sair aplicando</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <div class="hero-card-label">O que você recebe</div>
+      <div class="hero-card-item">
+        <div class="hero-card-icone">🖥️</div>
+        <div>
+          <div class="hero-card-titulo">Ao vivo via Microsoft Teams</div>
+          <div class="hero-card-desc">Treinamento remoto, interativo, sem deslocamento</div>
+        </div>
+      </div>
+      <div class="hero-card-item">
+        <div class="hero-card-icone">🏢</div>
+        <div>
+          <div class="hero-card-titulo">Turma exclusiva para sua empresa</div>
+          <div class="hero-card-desc">Sem misturar com outras organizações</div>
+        </div>
+      </div>
+      <div class="hero-card-item">
+        <div class="hero-card-icone">🎯</div>
+        <div>
+          <div class="hero-card-titulo">Conteúdo do seu setor</div>
+          <div class="hero-card-desc">Exemplos e casos adaptados ao contexto de vocês</div>
+        </div>
+      </div>
+      <div class="hero-card-item">
+        <div class="hero-card-icone">🔁</div>
+        <div>
+          <div class="hero-card-titulo">Sessão de retorno em 30 dias</div>
+          <div class="hero-card-desc">Acompanhamento gratuito pós-capacitação</div>
+        </div>
+      </div>
+      <div class="hero-card-preco">
+        <div class="label">Investimento a partir de</div>
+        <div class="valor"><strong>R$ 12.000</strong></div>
+        <div class="valor">por empresa — até 20 participantes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTES -->
+<section class="clientes">
+  <div class="clientes-label">Empresas para quem já entregamos</div>
+  <div class="clientes-logos">
+    <span class="cliente-nome">Vale</span>
+    <span class="cliente-sep"></span>
+    <span class="cliente-nome">Eletrobras</span>
+    <span class="cliente-sep"></span>
+    <span class="cliente-nome">MRS</span>
+    <span class="cliente-sep"></span>
+    <span class="cliente-nome">Globo</span>
+    <span class="cliente-sep"></span>
+    <span class="cliente-nome">Unilever</span>
+    <span class="cliente-sep"></span>
+    <span class="cliente-nome">Anglo American</span>
+    <span class="cliente-sep"></span>
+    <span class="cliente-nome">VLI</span>
+    <span class="cliente-sep"></span>
+    <span class="cliente-nome">Cemig</span>
+    <span class="cliente-sep"></span>
+    <span class="cliente-nome">Ânima</span>
+    <span class="cliente-sep"></span>
+    <span class="cliente-nome">Sequoia</span>
+  </div>
+</section>
+
+<!-- POR QUE AGORA -->
+<section class="section porque" id="porque">
+  <div class="section-inner">
+    <div class="section-label">O contexto</div>
+    <h2 class="section-titulo">A IA já chegou.<br>A maioria dos times ainda não sabe usar.</h2>
+
+    <div class="porque-grid">
+      <div class="porque-texto">
+        <p>As ferramentas de inteligência artificial evoluíram em velocidade impressionante. Mas dentro das grandes empresas, <strong>o maior gargalo não é mais tecnologia — é a capacidade dos times de saber o que fazer com ela.</strong></p>
+        <p>Líderes de operação ainda não sabem onde aplicar IA nos processos do dia a dia. Times de TI sentem pressão para adotar IA no desenvolvimento sem um método claro. O resultado é desperdício: budget aprovado, ferramentas contratadas, mas pouca mudança real.</p>
+        <p>Os treinamentos da Ivory não ensinam IA de forma genérica. Ensinam <strong>como aplicar IA no contexto específico de cada empresa</strong>, com exemplos reais de projetos que entregamos para empresas do mesmo porte e setor.</p>
+      </div>
+
+      <div class="porque-cards">
+        <div class="porque-card">
+          <div class="porque-icone">⚡</div>
+          <div>
+            <div class="porque-card-titulo">Orçamento de T&D, aprovação rápida</div>
+            <div class="porque-card-desc">O treinamento entra como capacitação, não como projeto de TI. Ciclo de aprovação muito mais curto.</div>
+          </div>
+        </div>
+        <div class="porque-card">
+          <div class="porque-icone">🎯</div>
+          <div>
+            <div class="porque-card-titulo">Conteúdo do seu setor</div>
+            <div class="porque-card-desc">Não é um curso gravado genérico. É ao vivo, com exemplos adaptados à sua operação e ao seu mercado.</div>
+          </div>
+        </div>
+        <div class="porque-card">
+          <div class="porque-icone">🤝</div>
+          <div>
+            <div class="porque-card-titulo">Quem treina é quem entrega</div>
+            <div class="porque-card-desc">O conteúdo vem de quem realmente implementou IA em empresas como a sua — não de instrutores teóricos.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CURSOS -->
+<section class="cursos" id="cursos">
+  <div class="section-inner">
+    <div class="section-label">Os dois programas</div>
+    <h2 class="section-titulo">Escolha o treinamento certo<br>para o seu time</h2>
+    <p class="section-sub">Dois cursos distintos, desenhados para os dois públicos que mais impactam a adoção de IA dentro de uma empresa.</p>
+
+    <div class="cursos-grid">
+      <div class="curso-card">
+        <div class="curso-topo">
+          <div class="curso-badge badge-negocio">Para Áreas de Negócio</div>
+          <h3 class="curso-nome">IA na Operação</h3>
+          <p class="curso-promessa">Ao final, os líderes sabem exatamente onde e como usar IA para reduzir trabalho manual e tomar decisões mais rápidas — com casos reais do seu setor.</p>
+        </div>
+        <div class="curso-corpo">
+          <div class="curso-publico-label">Para quem é</div>
+          <div class="curso-tags">
+            <span class="curso-tag">Diretores de Operação</span>
+            <span class="curso-tag">Gestores de Processo</span>
+            <span class="curso-tag">Líderes de Planejamento</span>
+            <span class="curso-tag">COO / VP Operações</span>
+          </div>
+
+          <div class="curso-dores-label">Problemas que o curso resolve</div>
+          <ul class="curso-dores">
+            <li>Processos manuais que consomem tempo e geram erros</li>
+            <li>Falta de visibilidade sobre a operação em tempo real</li>
+            <li>Time sem capacidade de inovar no dia a dia</li>
+            <li>Sensação de ficar para trás tecnologicamente</li>
+          </ul>
+
+          <div class="curso-preco-box">
+            <div>
+              <div class="curso-preco-label">Investimento</div>
+              <div class="curso-preco-valor">R$ 12.000</div>
+            </div>
+            <div class="curso-preco-detalhe">Por empresa<br>até 20 participantes</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="curso-card">
+        <div class="curso-topo">
+          <div class="curso-badge badge-ti">Para Times de TI</div>
+          <h3 class="curso-nome">IA no Desenvolvimento</h3>
+          <p class="curso-promessa">Como integrar IA ao processo de engenharia para aumentar a produtividade do squad sem perder qualidade — baseado no método que a própria Ivory usa.</p>
+        </div>
+        <div class="curso-corpo">
+          <div class="curso-publico-label">Para quem é</div>
+          <div class="curso-tags">
+            <span class="curso-tag">CTO / Diretor de TI</span>
+            <span class="curso-tag">Tech Leads</span>
+            <span class="curso-tag">Engenheiros Sênior</span>
+            <span class="curso-tag">Gestores de Produto</span>
+          </div>
+
+          <div class="curso-dores-label">Problemas que o curso resolve</div>
+          <ul class="curso-dores">
+            <li>Backlog de desenvolvimento que não anda</li>
+            <li>Pressão para entregar mais com o mesmo time</li>
+            <li>Projetos que atrasam e estouram orçamento</li>
+            <li>Dificuldade de adotar IA sem perder controle técnico</li>
+          </ul>
+
+          <div class="curso-preco-box">
+            <div>
+              <div class="curso-preco-label">Investimento</div>
+              <div class="curso-preco-valor">R$ 18.000</div>
+            </div>
+            <div class="curso-preco-detalhe">Por empresa<br>até 20 participantes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INCLUSO -->
+<section class="section incluso" id="incluso">
+  <div class="section-inner">
+    <div class="section-label">O que está incluído</div>
+    <h2 class="section-titulo">Tudo que seu time precisa<br>para sair aplicando</h2>
+    <p class="section-sub">Mais do que conteúdo, uma experiência completa de capacitação desenhada para gerar impacto real na operação.</p>
+
+    <div class="incluso-grid">
+      <div class="incluso-item">
+        <div class="incluso-icone">🖥️</div>
+        <div class="incluso-titulo">Treinamento ao vivo via Teams</div>
+        <div class="incluso-desc">1 a 2 dias de imersão remota, com interação em tempo real e dinâmicas práticas durante o curso.</div>
+      </div>
+      <div class="incluso-item">
+        <div class="incluso-icone">🏢</div>
+        <div class="incluso-titulo">Turma exclusiva da sua empresa</div>
+        <div class="incluso-desc">Sem misturar com outras organizações. Seu time, sua empresa, seu contexto — até 20 participantes.</div>
+      </div>
+      <div class="incluso-item">
+        <div class="incluso-icone">📋</div>
+        <div class="incluso-titulo">Material de apoio exclusivo</div>
+        <div class="incluso-desc">Apresentações e materiais entregues após o curso para consulta e aplicação contínua.</div>
+      </div>
+      <div class="incluso-item">
+        <div class="incluso-icone">🏆</div>
+        <div class="incluso-titulo">Certificado para cada participante</div>
+        <div class="incluso-desc">Certificado de conclusão com assinatura da Ivory para todos os participantes do treinamento.</div>
+      </div>
+      <div class="incluso-item">
+        <div class="incluso-icone">💡</div>
+        <div class="incluso-titulo">Cases reais de grandes empresas</div>
+        <div class="incluso-desc">Exemplos práticos de projetos entregues para Vale, MRS, Eletrobras e Globo ao longo do conteúdo.</div>
+      </div>
+      <div class="incluso-item">
+        <div class="incluso-icone">🎯</div>
+        <div class="incluso-titulo">Conteúdo adaptado ao seu setor</div>
+        <div class="incluso-desc">Exercícios e exemplos alinhados à realidade operacional da sua empresa antes do treinamento começar.</div>
+      </div>
+
+      <div class="sessao-especial">
+        <div class="sessao-especial-icone">🔁</div>
+        <div>
+          <div class="sessao-especial-tag">Diferencial exclusivo</div>
+          <div class="sessao-especial-titulo">Sessão de retorno 30 dias depois — sem custo adicional</div>
+          <div class="sessao-especial-desc">Um mês após o curso, fazemos uma hora de acompanhamento gratuito. O que o time conseguiu aplicar? O que travou? Onde estão os próximos passos? Esse é o compromisso real com o resultado, não só com a entrega do treinamento.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="section como" id="como-funciona">
+  <div class="section-inner">
+    <div class="section-label">Processo</div>
+    <h2 class="section-titulo">Do primeiro contato<br>à aplicação no negócio</h2>
+    <p class="section-sub">Um processo estruturado para garantir que o treinamento gere impacto real, não só horas de capacitação no currículo.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">🤝</div>
+        <div class="step-num">Passo 1</div>
+        <div class="step-titulo">Alinhamento e briefing</div>
+        <div class="step-desc">Reunião para entender o contexto da empresa, o perfil do time e os desafios operacionais mais urgentes.</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">🎨</div>
+        <div class="step-num">Passo 2</div>
+        <div class="step-titulo">Personalização do conteúdo</div>
+        <div class="step-desc">Adaptamos exemplos, cases e exercícios para o setor e a realidade da sua empresa antes do treinamento.</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">📚</div>
+        <div class="step-num">Passo 3</div>
+        <div class="step-titulo">Treinamento ao vivo</div>
+        <div class="step-desc">1 a 2 dias de imersão via Teams, com interação real, dinâmicas práticas e cases aplicados ao seu contexto.</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">🔁</div>
+        <div class="step-num">Passo 4</div>
+        <div class="step-titulo">Sessão de retorno</div>
+        <div class="step-desc">30 dias depois, 1 hora de acompanhamento gratuito para consolidar aprendizados e identificar próximos passos.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRECIFICAÇÃO -->
+<section class="section preco" id="preco">
+  <div class="section-inner">
+    <div class="section-label">Investimento</div>
+    <h2 class="section-titulo">Transparência no preço,<br>clareza no retorno</h2>
+    <p class="section-sub">Valores calibrados para o perfil enterprise, com aprovação via orçamento de T&D — sem disputar o budget de TI.</p>
+
+    <div class="preco-grid">
+      <div class="preco-card">
+        <div class="preco-nome">IA na Operação</div>
+        <div class="preco-valor">R$ 12.000</div>
+        <div class="preco-detalhe">por empresa — até 20 participantes</div>
+        <div class="preco-divider"></div>
+        <ul class="preco-lista">
+          <li>1 a 2 dias ao vivo via Teams</li>
+          <li>Turma exclusiva da sua empresa</li>
+          <li>Material e certificados inclusos</li>
+          <li>Cases adaptados ao seu setor</li>
+          <li>Sessão de retorno em 30 dias</li>
+        </ul>
+        <a href="#contato" class="btn-preco btn-preco-outline">Solicitar proposta</a>
+      </div>
+
+      <div class="preco-card destaque">
+        <div class="preco-popular">Mais contratado</div>
+        <div class="preco-nome">Pacote Completo</div>
+        <div class="preco-de">R$ 30.000</div>
+        <div class="preco-valor">R$ 25.500</div>
+        <div class="preco-detalhe">os dois cursos — 15% de desconto</div>
+        <div class="preco-divider"></div>
+        <ul class="preco-lista">
+          <li>IA na Operação + IA no Desenvolvimento</li>
+          <li>Turmas separadas por perfil de participante</li>
+          <li>Maior penetração na organização</li>
+          <li>Alinhamento entre negócio e TI</li>
+          <li>Duas sessões de retorno incluídas</li>
+        </ul>
+        <a href="#contato" class="btn-preco btn-preco-solid">Solicitar proposta</a>
+      </div>
+
+      <div class="preco-card">
+        <div class="preco-nome">IA no Desenvolvimento</div>
+        <div class="preco-valor">R$ 18.000</div>
+        <div class="preco-detalhe">por empresa — até 20 participantes</div>
+        <div class="preco-divider"></div>
+        <ul class="preco-lista">
+          <li>1 a 2 dias ao vivo via Teams</li>
+          <li>Turma exclusiva da sua empresa</li>
+          <li>Material e certificados inclusos</li>
+          <li>Método de engenharia da Ivory</li>
+          <li>Sessão de retorno em 30 dias</li>
+        </ul>
+        <a href="#contato" class="btn-preco btn-preco-outline">Solicitar proposta</a>
+      </div>
+    </div>
+
+    <div class="preco-nota">
+      <strong>Por que esse patamar de preço?</strong> Um treinamento barato sinaliza conteúdo genérico. O valor reflete o nível de personalização, a profundidade do conteúdo e a experiência real de quem entregou projetos de IA para as maiores empresas do Brasil. O objetivo não é maximizar volume de turmas — é capacitar os times certos com o conteúdo certo.
+    </div>
+  </div>
+</section>
+
+<!-- FORMULÁRIO -->
+<section class="formulario" id="contato">
+  <div class="form-grid">
+    <div class="form-left">
+      <div class="section-label">Solicite sua proposta</div>
+      <h2 class="section-titulo">Vamos conversar<br>sobre o seu time?</h2>
+      <p class="section-sub" style="margin-bottom: 0;">Preencha o formulário ao lado e entraremos em contato em até 1 dia útil com uma proposta personalizada para a sua empresa.</p>
+
+      <div class="form-aviso">
+        <div class="form-aviso-icone">🏢</div>
+        <div class="form-aviso-texto">
+          Nossos treinamentos são desenvolvidos exclusivamente para <span>grandes empresas com faturamento acima de R$ 100 milhões/ano.</span> Isso garante que o conteúdo, os cases e a profundidade do programa estejam alinhados ao nível de complexidade do seu negócio.
+        </div>
+      </div>
+
+      <ul class="form-beneficios">
+        <li>Proposta personalizada para o seu setor e contexto</li>
+        <li>Turma exclusiva — sem misturar com outras empresas</li>
+        <li>Cases reais de Vale, Eletrobras, MRS e Globo</li>
+        <li>Sessão de retorno gratuita 30 dias após o curso</li>
+        <li>Resposta em até 1 dia útil após o contato</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="form-box" id="form-box">
+        <div class="form-box-titulo">Quero receber uma proposta</div>
+        <p class="form-box-sub">Sem compromisso. Uma conversa direta sobre o que faz sentido para vocês.</p>
+
+        <form id="lead-form" onsubmit="enviarFormulario(event)">
+          <div class="form-group">
+            <label>Nome completo *</label>
+            <input type="text" name="nome" placeholder="Seu nome" required />
+          </div>
+
+          <div class="form-group">
+            <label>E-mail corporativo *</label>
+            <input type="email" name="email" placeholder="voce@empresa.com.br" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Empresa *</label>
+              <input type="text" name="empresa" placeholder="Nome da empresa" required />
+            </div>
+            <div class="form-group">
+              <label>Cargo *</label>
+              <input type="text" name="cargo" placeholder="Seu cargo" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Qual curso te interessa?</label>
+            <select name="curso">
+              <option value="">Selecione uma opção</option>
+              <option value="ia-na-operacao">IA na Operação — Para líderes de negócio</option>
+              <option value="ia-no-desenvolvimento">IA no Desenvolvimento — Para times de TI</option>
+              <option value="pacote-completo">Pacote Completo — Os dois cursos</option>
+              <option value="ainda-nao-sei">Ainda não sei, quero orientação</option>
+            </select>
+          </div>
+
+          <button type="submit" class="form-submit">Solicitar proposta agora →</button>
+          <p class="form-disclaimer">Seus dados não serão compartilhados com terceiros.<br>Retornamos em até 1 dia útil.</p>
+        </form>
+
+        <div class="form-sucesso" id="form-sucesso">
+          <div class="form-sucesso-icone">✅</div>
+          <div class="form-sucesso-titulo">Proposta solicitada com sucesso!</div>
+          <p class="form-sucesso-desc">Recebemos seu contato e retornaremos em até 1 dia útil com uma proposta personalizada para a sua empresa.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final" id="cta-final">
+  <div class="cta-final-inner">
+    <div class="cta-final-tag">Vagas limitadas por período</div>
+    <h2 class="cta-final-titulo">Pronto para levar<br><em>IA de verdade</em><br>para o seu time?</h2>
+    <p class="cta-final-sub">Fale com a gente e receba uma proposta personalizada para a sua empresa. Sem compromisso, sem burocracia — só uma conversa direta sobre o que faz sentido para o seu contexto.</p>
+    <div class="cta-final-btns">
+      <a href="mailto:contato@ivoryit.com.br" class="btn-cta-lg">Solicitar proposta agora</a>
+      <a href="https://ivoryit.com.br" class="btn-ghost-lg">Conheça a Ivory →</a>
+    </div>
+  </div>
+</section>
+
+<!-- RODAPÉ -->
+<footer>
+  <div class="footer-logo">IVORY<span>.</span></div>
+  <div class="footer-info">
+    <div><a href="https://ivoryit.com.br">ivoryit.com.br</a></div>
+    <div>IA. A nossa sexta marcha.</div>
+  </div>
+</footer>
+
+<script>
+  function enviarFormulario(e) {
+    e.preventDefault();
+    const form = document.getElementById('lead-form');
+    const data = new FormData(form);
+
+    const nome    = data.get('nome');
+    const email   = data.get('email');
+    const empresa = data.get('empresa');
+    const cargo   = data.get('cargo');
+    const curso   = data.get('curso') || 'Não informado';
+
+    const assunto = encodeURIComponent(`[Ivory] Solicitação de proposta — ${empresa}`);
+    const corpo   = encodeURIComponent(
+      `Nova solicitação de proposta recebida pela landing page.\n\n` +
+      `Nome: ${nome}\n` +
+      `E-mail: ${email}\n` +
+      `Empresa: ${empresa}\n` +
+      `Cargo: ${cargo}\n` +
+      `Curso de interesse: ${curso}\n\n` +
+      `---\nEnviado via Landing Page Ivory Capacitação em IA`
+    );
+
+    window.location.href = `mailto:contato@ivoryit.com.br?subject=${assunto}&body=${corpo}`;
+
+    setTimeout(() => {
+      form.style.display = 'none';
+      document.getElementById('form-sucesso').style.display = 'block';
+    }, 800);
+  }
+</script>
+</body>
+</html>
