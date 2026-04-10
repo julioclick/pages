@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oferta de Capacitação em IA — IVORY.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --azul:    #003D5B;
+      --creme:   #FFEEC2;
+      --laranja: #F35B04;
+      --branco:  #FFFFFF;
+      --preto:   #1A1A1A;
+      --cinza:   #6B7280;
+      --azul-light: #0a5a80;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--creme);
+      color: var(--preto);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── CAPA ─────────────────────────────────────────────── */
+    .capa {
+      background: var(--azul);
+      color: var(--branco);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 56px 64px;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+    }
+
+    .capa::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -120px;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(243,91,4,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .capa::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: -80px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,238,194,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .capa-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: var(--branco);
+    }
+
+    .logo span {
+      color: var(--laranja);
+    }
+
+    .badge-confidencial {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--creme);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .capa-body {
+      position: relative;
+      z-index: 1;
+    }
+
+    .capa-overline {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 20px;
+    }
+
+    .capa-titulo {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--branco);
+      margin-bottom: 24px;
+    }
+
+    .capa-titulo em {
+      font-style: normal;
+      color: var(--creme);
+    }
+
+    .capa-subtitulo {
+      font-size: 18px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.75);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    .capa-divider {
+      width: 60px;
+      height: 4px;
+      background: var(--laranja);
+      border-radius: 2px;
+      margin: 28px 0;
+    }
+
+    .capa-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .capa-footer-info {
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .capa-footer-info strong {
+      color: rgba(255,255,255,0.8);
+      font-weight: 600;
+    }
+
+    .capa-pill {
+      background: var(--laranja);
+      color: var(--branco);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 30px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── SEÇÕES ───────────────────────────────────────────── */
+    .section {
+      padding: 72px 64px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 12px;
+    }
+
+    .section-titulo {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--azul);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .section-intro {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--cinza);
+      max-width: 640px;
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    .divider-line {
+      width: 100%;
+      height: 1px;
+      background: rgba(0,61,91,0.1);
+      margin: 0 64px;
+      max-width: calc(100% - 128px);
+    }
+
+    /* ── CONTEXTO ─────────────────────────────────────────── */
+    .contexto-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .contexto-card {
+      background: var(--azul);
+      border-radius: 16px;
+      padding: 28px 24px;
+      color: var(--branco);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contexto-card::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(243,91,4,0.15);
+    }
+
+    .contexto-card .numero {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--laranja);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .contexto-card .label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--creme);
+      margin-bottom: 8px;
+    }
+
+    .contexto-card .desc {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+    }
+
+    /* ── ESTRATÉGIA ───────────────────────────────────────── */
+    .estrategia-box {
+      background: var(--azul);
+      border-radius: 20px;
+      padding: 48px;
+      color: var(--branco);
+      margin-top: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .estrategia-box::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(243,91,4,0.2) 0%, transparent 70%);
+    }
+
+    .estrategia-box .titulo {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--creme);
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .estrategia-box .texto {
+      font-size: 15px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.9;
+      max-width: 680px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .estrategia-box .texto strong {
+      color: var(--creme);
+      font-weight: 600;
+    }
+
+    .funil-steps {
+      display: flex;
+      gap: 0;
+      margin-top: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .funil-step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+
+    .funil-step:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--laranja);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .funil-step .icone {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin: 0 auto 12px;
+    }
+
+    .funil-step .step-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 6px;
+    }
+
+    .funil-step .step-titulo {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--creme);
+      margin-bottom: 4px;
+    }
+
+    .funil-step .step-desc {
+      font-size: 11px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+    }
+
+    /* ── CURSOS ───────────────────────────────────────────── */
+    .cursos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 40px;
+    }
+
+    .curso-card {
+      background: var(--branco);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(0,61,91,0.1);
+      box-shadow: 0 4px 24px rgba(0,61,91,0.07);
+    }
+
+    .curso-header {
+      padding: 28px 32px 24px;
+      border-bottom: 1px solid rgba(0,61,91,0.08);
+    }
+
+    .curso-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .curso-badge.negocio {
+      background: rgba(243,91,4,0.12);
+      color: var(--laranja);
+    }
+
+    .curso-badge.ti {
+      background: rgba(0,61,91,0.1);
+      color: var(--azul);
+    }
+
+    .curso-nome {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--azul);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .curso-promessa {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--cinza);
+      line-height: 1.7;
+    }
+
+    .curso-body {
+      padding: 24px 32px;
+    }
+
+    .curso-secao-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 12px;
+    }
+
+    .curso-publico {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tag-publico {
+      background: rgba(0,61,91,0.07);
+      color: var(--azul);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    .curso-dores {
+      list-style: none;
+      margin-bottom: 24px;
+    }
+
+    .curso-dores li {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--preto);
+      padding: 6px 0;
+      padding-left: 18px;
+      position: relative;
+      border-bottom: 1px solid rgba(0,61,91,0.05);
+      line-height: 1.5;
+    }
+
+    .curso-dores li:last-child {
+      border-bottom: none;
+    }
+
+    .curso-dores li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--laranja);
+      font-weight: 700;
+      font-size: 11px;
+      top: 7px;
+    }
+
+    .curso-resultado {
+      background: rgba(0,61,91,0.05);
+      border-left: 3px solid var(--azul);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--azul);
+      line-height: 1.6;
+    }
+
+    /* ── FORMATO ──────────────────────────────────────────── */
+    .formato-section {
+      background: var(--azul);
+      padding: 72px 64px;
+      page-break-before: always;
+    }
+
+    .formato-section .section-label {
+      color: rgba(255,238,194,0.7);
+    }
+
+    .formato-section .section-titulo {
+      color: var(--branco);
+      margin-bottom: 12px;
+    }
+
+    .formato-section .section-intro {
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 48px;
+    }
+
+    .formato-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .formato-item {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .formato-icone {
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
+
+    .formato-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 6px;
+    }
+
+    .formato-valor {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--branco);
+      margin-bottom: 4px;
+    }
+
+    .formato-desc {
+      font-size: 11px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.5;
+    }
+
+    /* ── INCLUSO ──────────────────────────────────────────── */
+    .incluso-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 960px;
+      margin: 40px auto 0;
+    }
+
+    .incluso-item {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .incluso-icone {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--laranja);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .incluso-texto .titulo {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--creme);
+      margin-bottom: 4px;
+    }
+
+    .incluso-texto .desc {
+      font-size: 11px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+    }
+
+    /* ── SESSÃO ESPECIAL ──────────────────────────────────── */
+    .sessao-especial {
+      max-width: 960px;
+      margin: 32px auto 0;
+    }
+
+    .sessao-especial-box {
+      background: var(--laranja);
+      border-radius: 16px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .sessao-especial-icone {
+      font-size: 40px;
+      flex-shrink: 0;
+    }
+
+    .sessao-especial-texto .titulo {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--branco);
+      margin-bottom: 6px;
+    }
+
+    .sessao-especial-texto .desc {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+    }
+
+    /* ── PRECIFICAÇÃO ─────────────────────────────────────── */
+    .preco-section {
+      padding: 72px 64px;
+      max-width: 960px;
+      margin: 0 auto;
+      page-break-before: always;
+    }
+
+    .preco-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .preco-card {
+      background: var(--branco);
+      border-radius: 20px;
+      padding: 32px 28px;
+      border: 1px solid rgba(0,61,91,0.1);
+      box-shadow: 0 4px 20px rgba(0,61,91,0.07);
+      text-align: center;
+      position: relative;
+    }
+
+    .preco-card.destaque {
+      background: var(--azul);
+      border-color: var(--azul);
+    }
+
+    .preco-card.destaque .preco-nome {
+      color: var(--creme);
+    }
+
+    .preco-card.destaque .preco-valor {
+      color: var(--branco);
+    }
+
+    .preco-card.destaque .preco-de {
+      color: rgba(255,255,255,0.5);
+    }
+
+    .preco-card.destaque .preco-detalhe {
+      color: rgba(255,255,255,0.6);
+    }
+
+    .preco-card.destaque .preco-desc {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .preco-tag-popular {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--laranja);
+      color: var(--branco);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .preco-nome {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--azul);
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .preco-de {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--cinza);
+      text-decoration: line-through;
+      margin-bottom: 4px;
+    }
+
+    .preco-valor {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--azul);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .preco-detalhe {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--cinza);
+      margin-bottom: 20px;
+    }
+
+    .preco-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(0,61,91,0.1);
+      margin: 20px 0;
+    }
+
+    .preco-card.destaque .preco-divider {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .preco-desc {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--cinza);
+      line-height: 1.7;
+    }
+
+    .preco-nota {
+      background: rgba(243,91,4,0.08);
+      border: 1px solid rgba(243,91,4,0.2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 32px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .preco-nota .icone {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .preco-nota .texto {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--preto);
+      line-height: 1.7;
+    }
+
+    .preco-nota .texto strong {
+      color: var(--laranja);
+      font-weight: 700;
+    }
+
+    /* ── PROSPECÇÃO ───────────────────────────────────────── */
+    .prospeccao-section {
+      padding: 72px 64px;
+      background: var(--creme);
+      page-break-before: always;
+    }
+
+    .prospeccao-content {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .prospeccao-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .prospeccao-card {
+      background: var(--branco);
+      border-radius: 16px;
+      padding: 28px 28px;
+      border: 1px solid rgba(0,61,91,0.1);
+    }
+
+    .prosp-numero {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--azul);
+      color: var(--branco);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .prosp-titulo {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--azul);
+      margin-bottom: 8px;
+    }
+
+    .prosp-desc {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--cinza);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .prosp-detalhe {
+      background: rgba(0,61,91,0.05);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--azul);
+      line-height: 1.6;
+    }
+
+    /* ── SETORES ──────────────────────────────────────────── */
+    .setores-box {
+      background: var(--azul);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-top: 24px;
+    }
+
+    .setores-titulo {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--creme);
+      margin-bottom: 16px;
+    }
+
+    .setores-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .setor-tag {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--branco);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+
+    /* ── CONVERSÃO ────────────────────────────────────────── */
+    .conversao-section {
+      padding: 72px 64px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 48px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--azul), var(--laranja));
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 28px;
+      margin-bottom: 36px;
+      position: relative;
+    }
+
+    .timeline-dot {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--azul);
+      border: 3px solid var(--creme);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-dot.laranja {
+      background: var(--laranja);
+    }
+
+    .timeline-content {
+      background: var(--branco);
+      border-radius: 14px;
+      padding: 20px 24px;
+      flex: 1;
+      border: 1px solid rgba(0,61,91,0.08);
+      box-shadow: 0 2px 12px rgba(0,61,91,0.05);
+    }
+
+    .timeline-tempo {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 4px;
+    }
+
+    .timeline-titulo {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--azul);
+      margin-bottom: 6px;
+    }
+
+    .timeline-desc {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--cinza);
+      line-height: 1.7;
+    }
+
+    /* ── RODAPÉ ───────────────────────────────────────────── */
+    .rodape {
+      background: var(--azul);
+      padding: 40px 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .rodape .logo {
+      font-size: 22px;
+    }
+
+    .rodape-info {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      text-align: right;
+    }
+
+    .rodape-info a {
+      color: var(--creme);
+      text-decoration: none;
+    }
+
+    /* ── PRINT ────────────────────────────────────────────── */
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .capa { min-height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════ CAPA -->
+<section class="capa">
+  <div class="capa-header">
+    <div class="logo">IVORY<span>.</span></div>
+    <div class="badge-confidencial">Uso Interno</div>
+  </div>
+
+  <div class="capa-body">
+    <div class="capa-overline">Estratégia de Prospecção 2025</div>
+    <h1 class="capa-titulo">Capacitação em IA<br>como <em>porta de entrada</em><br>para novos clientes</h1>
+    <div class="capa-divider"></div>
+    <p class="capa-subtitulo">Uma estratégia de prospecção baseada em treinamentos fechados de IA, desenhados para abrir relacionamentos reais dentro de empresas enterprise e gerar oportunidades de projetos maiores.</p>
+  </div>
+
+  <div class="capa-footer">
+    <div>
+      <div class="capa-footer-info"><strong>Formato:</strong> Turma fechada por empresa — ao vivo via Teams</div>
+      <div class="capa-footer-info" style="margin-top:4px"><strong>Perfil alvo:</strong> Empresas de médio porte a enterprise — setores prioritários da Ivory</div>
+    </div>
+    <div class="capa-pill">Turma Fechada</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ CONTEXTO -->
+<div class="divider-line" style="margin: 0 64px;"></div>
+<section class="section">
+  <div class="section-label">Por que isso faz sentido</div>
+  <h2 class="section-titulo">O problema que essa estratégia resolve</h2>
+  <p class="section-intro">Vender um projeto de software customizado para uma empresa que nunca te conheceu é cada vez mais difícil. O ciclo é longo, a desconfiança é alta e o orçamento de TI é disputado. Precisamos de um caminho de entrada com menos fricção e mais relacionamento.</p>
+
+  <div class="contexto-grid">
+    <div class="contexto-card">
+      <div class="numero">T&D</div>
+      <div class="label">Orçamento separado</div>
+      <div class="desc">Treinamentos aprovam por RH/T&D, não por TI. Ciclo mais rápido, menos burocracia.</div>
+    </div>
+    <div class="contexto-card">
+      <div class="numero">2 dias</div>
+      <div class="label">Dentro da empresa</div>
+      <div class="desc">Dois dias ao vivo com o time do cliente cria vínculo real. Nenhuma prospecção fria faz isso.</div>
+    </div>
+    <div class="contexto-card">
+      <div class="numero">100%</div>
+      <div class="label">ICP qualificado</div>
+      <div class="desc">Quem paga por capacitação em IA já reconhece que precisa evoluir — é exatamente quem compra projetos depois.</div>
+    </div>
+  </div>
+
+  <div class="estrategia-box" style="margin-top: 32px;">
+    <div class="titulo">A lógica central da estratégia</div>
+    <p class="texto">Não estamos vendendo um curso. Estamos <strong>comprando dois dias dentro da empresa do cliente</strong> com um pretexto legítimo, com orçamento de RH, e saindo com relacionamento real com quem decide. O curso é o cavalo de Troia. O projeto é o objetivo.</p>
+
+    <div class="funil-steps" style="margin-top: 36px;">
+      <div class="funil-step">
+        <div class="icone">🎯</div>
+        <div class="step-label">Passo 1</div>
+        <div class="step-titulo">Prospecção</div>
+        <div class="step-desc">Abordagem via RH/T&D com oferta de capacitação</div>
+      </div>
+      <div class="funil-step">
+        <div class="icone">📚</div>
+        <div class="step-label">Passo 2</div>
+        <div class="step-titulo">Curso fechado</div>
+        <div class="step-desc">1 a 2 dias ao vivo com o time do cliente</div>
+      </div>
+      <div class="funil-step">
+        <div class="icone">🤝</div>
+        <div class="step-label">Passo 3</div>
+        <div class="step-titulo">Relacionamento</div>
+        <div class="step-desc">Sessão de retorno 30 dias depois — conversa de contexto</div>
+      </div>
+      <div class="funil-step">
+        <div class="icone">🚀</div>
+        <div class="step-label">Passo 4</div>
+        <div class="step-titulo">Projeto</div>
+        <div class="step-desc">Diagnóstico e proposta de projeto maior</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider-line"></div>
+
+<!-- ═══════════════════════════════════════════════ OS CURSOS -->
+<section class="section">
+  <div class="section-label">Os dois produtos</div>
+  <h2 class="section-titulo">Formatos de capacitação</h2>
+  <p class="section-intro">Dois cursos fechados desenhados para os dois perfis de compradores dentro das empresas do nosso ICP. Cada um fala a língua do seu público e planta as sementes certas para a conversa de projeto.</p>
+
+  <div class="cursos-grid">
+
+    <!-- Curso 1 -->
+    <div class="curso-card">
+      <div class="curso-header">
+        <div class="curso-badge negocio">Para Áreas de Negócio</div>
+        <h3 class="curso-nome">IA na Operação</h3>
+        <p class="curso-promessa">Ao final, o time de gestão sabe exatamente onde aplicar IA para reduzir trabalho manual e tomar decisões mais rápidas, com exemplos reais do setor.</p>
+      </div>
+      <div class="curso-body">
+        <div class="curso-secao-label">Público-alvo</div>
+        <div class="curso-publico">
+          <span class="tag-publico">Diretores de Operação</span>
+          <span class="tag-publico">Gestores de Processo</span>
+          <span class="tag-publico">Líderes de Planejamento</span>
+          <span class="tag-publico">COO / VP Operações</span>
+        </div>
+
+        <div class="curso-secao-label">Dores que o curso ativa</div>
+        <ul class="curso-dores">
+          <li>Processos manuais que consomem tempo e geram erros</li>
+          <li>Falta de visibilidade sobre o que acontece na operação</li>
+          <li>Time sobrecarregado, sem capacidade de inovar</li>
+          <li>Sensação de ficar para trás tecnologicamente</li>
+        </ul>
+
+        <div class="curso-secao-label">Resultado esperado</div>
+        <div class="curso-resultado">
+          O time sai com clareza sobre onde e como usar IA na rotina operacional, com referências práticas de empresas do mesmo porte e setor.
+        </div>
+      </div>
+    </div>
+
+    <!-- Curso 2 -->
+    <div class="curso-card">
+      <div class="curso-header">
+        <div class="curso-badge ti">Para Times de TI</div>
+        <h3 class="curso-nome">IA no Desenvolvimento</h3>
+        <p class="curso-promessa">Como integrar IA no processo de engenharia para aumentar a produtividade do squad sem abrir mão de qualidade, baseado no método que a própria Ivory usa.</p>
+      </div>
+      <div class="curso-body">
+        <div class="curso-secao-label">Público-alvo</div>
+        <div class="curso-publico">
+          <span class="tag-publico">CTO / Diretor de TI</span>
+          <span class="tag-publico">Tech Leads</span>
+          <span class="tag-publico">Engenheiros Sênior</span>
+          <span class="tag-publico">Gestores de Produto</span>
+        </div>
+
+        <div class="curso-secao-label">Dores que o curso ativa</div>
+        <ul class="curso-dores">
+          <li>Backlog de desenvolvimento que não anda</li>
+          <li>Pressão para entregar mais com o mesmo time</li>
+          <li>Projetos que atrasam e estouram orçamento</li>
+          <li>Dificuldade de adotar IA sem perder controle técnico</li>
+        </ul>
+
+        <div class="curso-secao-label">Resultado esperado</div>
+        <div class="curso-resultado">
+          O time sai com um roteiro claro para integrar IA ao processo de desenvolvimento, baseado no método Ivory que já foi aplicado em Vale, MRS e Eletrobras.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ FORMATO E INCLUSO -->
+<section class="formato-section">
+  <div style="max-width: 960px; margin: 0 auto;">
+    <div class="section-label">Como funciona</div>
+    <h2 class="section-titulo">Formato de entrega</h2>
+    <p class="section-intro">Treinamento ao vivo, fechado por empresa, com grupo exclusivo do cliente. Sem turmas mistas. Sem conteúdo genérico.</p>
+
+    <div class="formato-grid">
+      <div class="formato-item">
+        <div class="formato-icone">🖥️</div>
+        <div class="formato-label">Plataforma</div>
+        <div class="formato-valor">Microsoft Teams</div>
+        <div class="formato-desc">Ao vivo, com interação em tempo real</div>
+      </div>
+      <div class="formato-item">
+        <div class="formato-icone">📅</div>
+        <div class="formato-label">Duração</div>
+        <div class="formato-valor">1 a 2 dias</div>
+        <div class="formato-desc">Formato intensivo, sem diluir o aprendizado</div>
+      </div>
+      <div class="formato-item">
+        <div class="formato-icone">🏢</div>
+        <div class="formato-label">Turma</div>
+        <div class="formato-valor">Fechada</div>
+        <div class="formato-desc">Exclusivo para a empresa contratante — até 20 participantes</div>
+      </div>
+      <div class="formato-item">
+        <div class="formato-icone">🎯</div>
+        <div class="formato-label">Personalização</div>
+        <div class="formato-valor">Setorial</div>
+        <div class="formato-desc">Exemplos e cases adaptados ao setor do cliente</div>
+      </div>
+    </div>
+
+    <div class="incluso-grid">
+      <div class="incluso-item">
+        <div class="incluso-icone">📋</div>
+        <div class="incluso-texto">
+          <div class="titulo">Material exclusivo</div>
+          <div class="desc">Apresentações e materiais de apoio com identidade Ivory, entregues após o curso</div>
+        </div>
+      </div>
+      <div class="incluso-item">
+        <div class="incluso-icone">🏆</div>
+        <div class="incluso-texto">
+          <div class="titulo">Certificado para participantes</div>
+          <div class="desc">Certificado de conclusão com a assinatura da Ivory para cada participante</div>
+        </div>
+      </div>
+      <div class="incluso-item">
+        <div class="incluso-icone">💡</div>
+        <div class="incluso-texto">
+          <div class="titulo">Cases reais da Ivory</div>
+          <div class="desc">Exemplos de projetos entregues para Vale, MRS, Eletrobras, Globo usados como referência ao longo do curso</div>
+        </div>
+      </div>
+      <div class="incluso-item">
+        <div class="incluso-icone">📊</div>
+        <div class="incluso-texto">
+          <div class="titulo">Aplicações práticas do setor</div>
+          <div class="desc">Exercícios e discussões adaptados à realidade operacional do cliente</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sessao-especial">
+      <div class="sessao-especial-box">
+        <div class="sessao-especial-icone">🔁</div>
+        <div class="sessao-especial-texto">
+          <div class="titulo">Sessão de retorno — 30 dias depois</div>
+          <div class="desc">Uma hora de acompanhamento gratuita um mês após o curso. "Como está indo a aplicação? O que travou? O que funcionou?" Esse é o momento onde a conversa de projeto começa de forma natural, sem pitch, sem pressão.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PRECIFICAÇÃO -->
+<section class="preco-section">
+  <div class="section-label">Investimento</div>
+  <h2 class="section-titulo">Precificação</h2>
+  <p class="section-intro">Preço calibrado para entrar como orçamento de T&D — aprovação mais rápida, sem disputar o budget de TI. Posicionamento premium reforça a credibilidade da Ivory como parceiro enterprise.</p>
+
+  <div class="preco-grid">
+
+    <div class="preco-card">
+      <div class="preco-nome">IA na Operação</div>
+      <div class="preco-valor">R$ 12.000</div>
+      <div class="preco-detalhe">por empresa — até 20 participantes</div>
+      <div class="preco-divider"></div>
+      <div class="preco-desc">Curso voltado para gestores e líderes de operação. Inclui material, certificado e sessão de retorno de 30 dias.</div>
+    </div>
+
+    <div class="preco-card destaque">
+      <div class="preco-tag-popular">Recomendado</div>
+      <div class="preco-nome">Pacote Completo</div>
+      <div class="preco-de">R$ 30.000</div>
+      <div class="preco-valor">R$ 25.500</div>
+      <div class="preco-detalhe">os dois cursos — 15% de desconto</div>
+      <div class="preco-divider"></div>
+      <div class="preco-desc">Os dois cursos para a mesma empresa — negócio e TI. Maior penetração na conta e mais pontos de contato para a conversa de projeto.</div>
+    </div>
+
+    <div class="preco-card">
+      <div class="preco-nome">IA no Desenvolvimento</div>
+      <div class="preco-valor">R$ 18.000</div>
+      <div class="preco-detalhe">por empresa — até 20 participantes</div>
+      <div class="preco-divider"></div>
+      <div class="preco-desc">Curso voltado para times de TI, tech leads e CTOs. Inclui material, certificado, e sessão de retorno de 30 dias.</div>
+    </div>
+
+  </div>
+
+  <div class="preco-nota">
+    <div class="icone">💡</div>
+    <div class="texto">
+      <strong>Por que esse patamar de preço?</strong> Abaixo de R$ 10.000, o curso soa como commodity e perde credibilidade frente ao perfil de empresa que queremos atrair. O preço correto sinaliza que a Ivory é parceiro enterprise, não fornecedor de treinamento genérico. O objetivo não é maximizar receita com o curso — é qualificar o relacionamento com empresas que podem comprar projetos de muito maior valor depois.
+    </div>
+  </div>
+</section>
+
+<div class="divider-line"></div>
+
+<!-- ═══════════════════════════════════════════ PROSPECÇÃO -->
+<section class="prospeccao-section">
+  <div class="prospeccao-content">
+    <div class="section-label">Como chegar até o cliente</div>
+    <h2 class="section-titulo">Estratégia de prospecção dos cursos</h2>
+    <p class="section-intro">O curso resolve o problema de prospecção, mas o próprio curso precisa ser prospectado. A lógica de entrada muda: a porta não é TI, é RH ou a área que sente a dor operacional.</p>
+
+    <div class="prospeccao-grid">
+
+      <div class="prospeccao-card">
+        <div class="prosp-numero">1</div>
+        <div class="prosp-titulo">Porta de entrada via RH / T&D</div>
+        <div class="prosp-desc">Abordar Gerentes e Diretores de RH, Gestão de Pessoas ou T&D nos ICPs. Eles têm metas de capacitação, orçamento próprio e ciclo de aprovação muito mais rápido que TI.</div>
+        <div class="prosp-detalhe">Argumento: "Ajudo seu time a usar IA no dia a dia, com base em projetos reais em empresas do mesmo setor — sem precisar de TI para isso."</div>
+      </div>
+
+      <div class="prospeccao-card">
+        <div class="prosp-numero">2</div>
+        <div class="prosp-titulo">LinkedIn — Marca pessoal do Julio</div>
+        <div class="prosp-desc">Conteúdo mostrando como times de operação e TI estão usando IA na prática gera interesse orgânico exatamente nos perfis que queremos atingir. A autoridade é construída antes da abordagem comercial.</div>
+        <div class="prosp-detalhe">Foco: posts sobre produtividade com IA, cases reais (sem revelar clientes), e provocações sobre gaps de capacitação nos setores do ICP.</div>
+      </div>
+
+      <div class="prospeccao-card">
+        <div class="prosp-numero">3</div>
+        <div class="prosp-titulo">Abordagem direta a líderes com dor</div>
+        <div class="prosp-desc">CTOs, Diretores de Operações e COOs dos setores prioritários via LinkedIn. A abordagem não é venda de projeto — é convite para uma capacitação com cases do setor deles.</div>
+        <div class="prosp-detalhe">Gatilho: novo executivo na área, meta de digitalização anunciada, contrato com fornecedor atual encerrando.</div>
+      </div>
+
+      <div class="prospeccao-card">
+        <div class="prosp-numero">4</div>
+        <div class="prosp-titulo">Indicação de clientes atuais</div>
+        <div class="prosp-desc">Clientes da Ivory que já conhecem a qualidade da entrega são os melhores propagadores. Uma indicação para o setor de RH ou para um executivo de uma empresa parceira abre portas que nenhuma cold call abre.</div>
+        <div class="prosp-detalhe">Mecanismo: oferecer o curso como benefício de network para clientes existentes, que podem indicar para parceiros e fornecedores.</div>
+      </div>
+
+    </div>
+
+    <div class="setores-box">
+      <div class="setores-titulo">Setores prioritários para prospecção dos cursos</div>
+      <div class="setores-grid">
+        <span class="setor-tag">🚛 Logística e Transporte</span>
+        <span class="setor-tag">⛏️ Mineração</span>
+        <span class="setor-tag">⚡ Energia e Utilities</span>
+        <span class="setor-tag">🏗️ Construção e Infraestrutura</span>
+        <span class="setor-tag">📺 Mídia Corporativa</span>
+        <span class="setor-tag">🏭 Indústria Pesada</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ CONVERSÃO -->
+<section class="conversao-section">
+  <div class="section-label">Do curso ao projeto</div>
+  <h2 class="section-titulo">Funil de conversão</h2>
+  <p class="section-intro">A transição do curso para um projeto maior nunca deve parecer uma venda. É um processo natural de aprofundamento de relacionamento. O timeline abaixo mostra como isso acontece.</p>
+
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-dot">🎯</div>
+      <div class="timeline-content">
+        <div class="timeline-tempo">Semana -2 a 0 — Pré-curso</div>
+        <div class="timeline-titulo">Alinhamento e personalização</div>
+        <div class="timeline-desc">Reunião de briefing com o responsável pela capacitação para entender o contexto da empresa, os desafios do time e adaptar os exemplos do curso para o setor. Primeiro contato real com o cliente.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot">📚</div>
+      <div class="timeline-content">
+        <div class="timeline-tempo">Dia 1 e 2 — Durante o curso</div>
+        <div class="timeline-titulo">Portfólio como conteúdo, não como pitch</div>
+        <div class="timeline-desc">Cases de Vale, MRS, Eletrobras, Globo entram como exemplos práticos durante o conteúdo. Os participantes veem a Ivory operando em contextos como o deles — sem que isso seja uma apresentação comercial.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot">📬</div>
+      <div class="timeline-content">
+        <div class="timeline-tempo">Semana 1 pós-curso</div>
+        <div class="timeline-titulo">Envio de material e primeiro follow-up</div>
+        <div class="timeline-desc">Entrega do material do curso com uma mensagem personalizada para o responsável. Pergunta simples: "O que o time achou mais útil? Tem alguma aplicação que ficou em aberto?" Esse é o primeiro sinal de abertura para uma conversa mais profunda.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot laranja">🔁</div>
+      <div class="timeline-content">
+        <div class="timeline-tempo">30 dias pós-curso</div>
+        <div class="timeline-titulo">Sessão de retorno — a conversa que importa</div>
+        <div class="timeline-desc">Uma hora de acompanhamento gratuito. Nesse encontro surgem os problemas reais: o que travou, o que o time tentou aplicar, onde a operação tem gargalos que a IA poderia resolver. É aqui que a conversa de projeto começa — de forma natural, sem pressão.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot laranja">🚀</div>
+      <div class="timeline-content">
+        <div class="timeline-tempo">45 a 60 dias pós-curso</div>
+        <div class="timeline-titulo">Diagnóstico e proposta de projeto</div>
+        <div class="timeline-desc">"Percebi que vocês têm uma situação parecida com a de um cliente nosso. Posso te mostrar o que a gente fez?" Não é uma proposta fria — é uma conversa técnica entre parceiros que já se conhecem. A taxa de conversão aqui é estruturalmente maior do que qualquer cold outreach.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ RODAPÉ -->
+<footer class="rodape">
+  <div class="logo">IVORY<span style="color: var(--laranja);">.</span></div>
+  <div class="rodape-info">
+    <div>ivoryit.com.br</div>
+    <div style="margin-top: 4px;">Documento interno — Estratégia Comercial 2025</div>
+  </div>
+</footer>
+
+</body>
+</html>
