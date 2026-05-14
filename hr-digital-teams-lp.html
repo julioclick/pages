@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Capacitação, onboarding e automação de RH dentro do Microsoft Teams. Solução enterprise sobre Microsoft Power Platform, entregue pela Ivory IT." />
+  <title>RH Digital no Microsoft Teams — Ivory IT</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Poppins', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            ivory: {
+              navy:      '#003D5B',
+              'navy-2':  '#002A40',
+              'navy-3':  '#0A4D70',
+              orange:    '#F35B04',
+              'orange-2':'#FF7A30',
+              cream:     '#FFEEC2',
+              'cream-2': '#FFF7E0',
+              ink:       '#0D1B26',
+              slate:     '#475569',
+              'slate-2': '#64748B',
+              line:      '#E2E8F0',
+              'line-2':  '#EEF2F6',
+              bg:        '#F8FAFC',
+            }
+          },
+          boxShadow: {
+            'soft':  '0 1px 2px rgba(0,61,91,.04), 0 1px 3px rgba(0,61,91,.06)',
+            'card':  '0 4px 14px rgba(0,61,91,.06), 0 2px 6px rgba(0,61,91,.04)',
+            'pop':   '0 20px 48px rgba(0,61,91,.14), 0 8px 16px rgba(0,61,91,.08)',
+            'glow':  '0 30px 80px -20px rgba(0,61,91,.45)',
+            'cta':   '0 10px 24px rgba(243,91,4,.32)',
+          },
+          borderRadius: {
+            'xl2': '14px',
+          },
+          animation: {
+            'fade-up': 'fadeUp .7s cubic-bezier(.2,.7,.2,1) both',
+            'fade-in': 'fadeIn .8s ease-out both',
+            'float':   'float 6s ease-in-out infinite',
+            'pulse-soft': 'pulseSoft 2.4s ease-in-out infinite',
+            'progress': 'progress 1.6s cubic-bezier(.25,.46,.45,.94) .3s both',
+            'spin-slow': 'spin 18s linear infinite',
+          },
+          keyframes: {
+            fadeUp: { '0%': { opacity: 0, transform: 'translateY(16px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+            float:  { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
+            pulseSoft: { '0%,100%': { opacity: .6 }, '50%': { opacity: 1 } },
+            progress: { '0%': { width: '0%' }, '100%': { width: 'var(--p,70%)' } },
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', system-ui, sans-serif; -webkit-font-smoothing: antialiased; color: #0D1B26; background: #FFFFFF; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+
+    .gradient-text {
+      background: linear-gradient(120deg, #003D5B 0%, #0A4D70 60%, #F35B04 140%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    /* mesh background for hero */
+    .hero-mesh {
+      background:
+        radial-gradient(60% 50% at 12% 18%, rgba(243,91,4,.10), transparent 60%),
+        radial-gradient(50% 50% at 88% 10%, rgba(0,61,91,.10), transparent 60%),
+        radial-gradient(70% 60% at 60% 100%, rgba(255,238,194,.55), transparent 70%),
+        linear-gradient(180deg,#FFFFFF 0%, #F8FAFC 100%);
+    }
+
+    /* fine grid overlay */
+    .grid-overlay {
+      background-image:
+        linear-gradient(rgba(0,61,91,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,61,91,.05) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    }
+
+    .ring-focus:focus-visible { outline: 3px solid #F35B04; outline-offset: 3px; border-radius: 10px; }
+
+    .glass {
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .scroll-fade { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+    .scroll-fade.is-in { opacity: 1; transform: none; }
+
+    /* progress bars in mockups */
+    .bar-fill { width: 0; animation: progress 1.6s cubic-bezier(.25,.46,.45,.94) .3s both; }
+    @keyframes progress { from { width: 0 } to { width: var(--p, 70%); } }
+
+    /* logo strip mask */
+    .logo-mask {
+      mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+    }
+  </style>
+</head>
+
+<body class="font-sans">
+
+  <!-- ─────────── NAV ─────────── -->
+  <header class="fixed inset-x-0 top-0 z-50 glass border-b border-ivory-line">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2 ring-focus">
+        <span class="text-[1.15rem] font-extrabold tracking-tight text-ivory-navy">IVORY<span class="text-ivory-orange">.</span></span>
+        <span class="hidden md:inline-flex items-center text-[11px] font-semibold uppercase tracking-[.18em] text-ivory-slate-2 border-l border-ivory-line pl-3 ml-1">RH Digital</span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-ivory-slate">
+        <a href="#solucao"     class="hover:text-ivory-navy transition-colors ring-focus">Solução</a>
+        <a href="#diferenciais" class="hover:text-ivory-navy transition-colors ring-focus">Diferenciais</a>
+        <a href="#modulos"     class="hover:text-ivory-navy transition-colors ring-focus">Módulos</a>
+        <a href="#plataforma"  class="hover:text-ivory-navy transition-colors ring-focus">Plataforma</a>
+        <a href="#resultados"  class="hover:text-ivory-navy transition-colors ring-focus">Resultados</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a href="#contato" class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-ivory-navy hover:text-ivory-orange transition-colors px-3 py-2 ring-focus">
+          Ver solução
+        </a>
+        <a href="#contato" class="inline-flex items-center gap-2 bg-ivory-orange hover:bg-ivory-orange-2 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-cta hover:-translate-y-0.5 transition-all ring-focus">
+          Agendar demonstração
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─────────── HERO ─────────── -->
+  <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden hero-mesh">
+    <div aria-hidden="true" class="absolute inset-0 grid-overlay"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+      <!-- copy -->
+      <div class="lg:col-span-6 animate-fade-up">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-ivory-line shadow-soft text-xs font-semibold text-ivory-navy">
+          <svg class="w-3.5 h-3.5 text-ivory-orange" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9H22l-6 4.4 2.3 7L12 16.9 5.7 20.3l2.3-7-6-4.4h7.6z"/></svg>
+          Microsoft Power Platform · Teams Integrado
+        </div>
+
+        <h1 class="mt-5 text-[2.4rem] sm:text-5xl lg:text-[3.6rem] leading-[1.05] font-extrabold tracking-tight text-ivory-navy">
+          Capacitação e onboarding
+          <span class="block gradient-text">dentro do Microsoft Teams.</span>
+        </h1>
+
+        <p class="mt-6 text-lg text-ivory-slate max-w-xl leading-relaxed">
+          Transforme processos manuais de RH em experiências digitais integradas, automatizadas e seguras utilizando <span class="font-semibold text-ivory-navy">Microsoft Power Platform</span>.
+        </p>
+
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+          <a href="#contato" class="inline-flex items-center gap-2 bg-ivory-orange hover:bg-ivory-orange-2 text-white font-semibold px-6 py-3.5 rounded-xl shadow-cta hover:-translate-y-0.5 transition-all ring-focus">
+            Agendar demonstração
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#modulos" class="inline-flex items-center gap-2 bg-white hover:bg-ivory-bg text-ivory-navy font-semibold px-6 py-3.5 rounded-xl border border-ivory-line shadow-soft transition-all ring-focus">
+            Ver solução
+          </a>
+        </div>
+
+        <!-- trust strip -->
+        <dl class="mt-10 grid grid-cols-3 gap-4 max-w-lg">
+          <div class="border-l-2 border-ivory-orange pl-3">
+            <dt class="text-[11px] uppercase tracking-wider text-ivory-slate-2 font-semibold">Sem novo login</dt>
+            <dd class="text-sm font-semibold text-ivory-navy mt-0.5">SSO Microsoft</dd>
+          </div>
+          <div class="border-l-2 border-ivory-orange pl-3">
+            <dt class="text-[11px] uppercase tracking-wider text-ivory-slate-2 font-semibold">Segurança</dt>
+            <dd class="text-sm font-semibold text-ivory-navy mt-0.5">Microsoft 365</dd>
+          </div>
+          <div class="border-l-2 border-ivory-orange pl-3">
+            <dt class="text-[11px] uppercase tracking-wider text-ivory-slate-2 font-semibold">Implantação</dt>
+            <dd class="text-sm font-semibold text-ivory-navy mt-0.5">Em semanas</dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- mockup -->
+      <div class="lg:col-span-6 relative animate-fade-in">
+        <!-- glow -->
+        <div aria-hidden="true" class="absolute -inset-8 bg-gradient-to-tr from-ivory-orange/15 via-transparent to-ivory-navy/15 blur-3xl"></div>
+
+        <!-- Teams window -->
+        <div class="relative bg-white rounded-2xl shadow-pop border border-ivory-line overflow-hidden">
+          <!-- window chrome -->
+          <div class="flex items-center gap-2 px-4 h-10 bg-ivory-bg border-b border-ivory-line">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#FF5F57]"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-[#FEBC2E]"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-[#28C840]"></span>
+            <div class="ml-3 flex items-center gap-2 text-[11px] text-ivory-slate-2 font-medium">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="#5059C9"><path d="M21 7.5h-5V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h9a2 2 0 002-2v-2.5h5A1.5 1.5 0 0022.5 13V9A1.5 1.5 0 0021 7.5zM10.5 14.2H8.7v4.4H7.3v-4.4H5.5v-1.3h5z"/></svg>
+              Microsoft Teams · RH Digital
+            </div>
+          </div>
+
+          <div class="grid grid-cols-12">
+            <!-- teams rail -->
+            <aside class="col-span-1 bg-[#F3F2F1] border-r border-ivory-line py-3 flex flex-col items-center gap-4">
+              <div class="w-7 h-7 rounded-md bg-ivory-navy text-white grid place-items-center text-[10px] font-bold">RH</div>
+              <div class="w-7 h-7 rounded-md hover:bg-white grid place-items-center text-ivory-slate-2">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3zm0 8h8v-6H3zm10 0h8V11h-8zm0-18v6h8V3z"/></svg>
+              </div>
+              <div class="w-7 h-7 rounded-md hover:bg-white grid place-items-center text-ivory-slate-2">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </aside>
+
+            <!-- sidebar nav -->
+            <aside class="col-span-3 border-r border-ivory-line py-4 px-3 bg-white">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-ivory-slate-2 mb-2">Portal RH</div>
+              <ul class="space-y-1 text-[12px]">
+                <li class="flex items-center gap-2 px-2 py-1.5 rounded-md bg-ivory-cream-2 text-ivory-navy font-semibold">
+                  <span class="w-1 h-4 rounded-full bg-ivory-orange"></span> Dashboard
+                </li>
+                <li class="flex items-center gap-2 px-2 py-1.5 rounded-md text-ivory-slate hover:bg-ivory-line-2">Onboarding</li>
+                <li class="flex items-center gap-2 px-2 py-1.5 rounded-md text-ivory-slate hover:bg-ivory-line-2">Trilhas</li>
+                <li class="flex items-center gap-2 px-2 py-1.5 rounded-md text-ivory-slate hover:bg-ivory-line-2">Documentos</li>
+                <li class="flex items-center gap-2 px-2 py-1.5 rounded-md text-ivory-slate hover:bg-ivory-line-2">Aprovações</li>
+                <li class="flex items-center gap-2 px-2 py-1.5 rounded-md text-ivory-slate hover:bg-ivory-line-2">Certificações</li>
+              </ul>
+            </aside>
+
+            <!-- main content -->
+            <main class="col-span-8 p-4 bg-ivory-bg/40">
+              <div class="flex items-center justify-between mb-3">
+                <div>
+                  <div class="text-[10px] uppercase tracking-wider text-ivory-slate-2 font-bold">Visão geral · Q2 2026</div>
+                  <div class="text-sm font-bold text-ivory-navy">Dashboard de Onboarding</div>
+                </div>
+                <div class="flex items-center gap-1.5 text-[10px] text-ivory-slate-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-soft"></span>
+                  Atualizado agora
+                </div>
+              </div>
+
+              <!-- KPI tiles -->
+              <div class="grid grid-cols-3 gap-2 mb-3">
+                <div class="bg-white border border-ivory-line rounded-lg p-2.5">
+                  <div class="text-[9px] text-ivory-slate-2 font-semibold uppercase tracking-wider">Novos colaboradores</div>
+                  <div class="text-lg font-extrabold text-ivory-navy leading-tight mt-0.5">128</div>
+                  <div class="text-[9px] text-emerald-600 font-semibold">▲ 12% no mês</div>
+                </div>
+                <div class="bg-white border border-ivory-line rounded-lg p-2.5">
+                  <div class="text-[9px] text-ivory-slate-2 font-semibold uppercase tracking-wider">Trilhas ativas</div>
+                  <div class="text-lg font-extrabold text-ivory-navy leading-tight mt-0.5">42</div>
+                  <div class="text-[9px] text-ivory-slate-2 font-semibold">8 em destaque</div>
+                </div>
+                <div class="bg-white border border-ivory-line rounded-lg p-2.5">
+                  <div class="text-[9px] text-ivory-slate-2 font-semibold uppercase tracking-wider">Conclusão</div>
+                  <div class="text-lg font-extrabold text-ivory-navy leading-tight mt-0.5">87%</div>
+                  <div class="text-[9px] text-emerald-600 font-semibold">▲ 4 p.p.</div>
+                </div>
+              </div>
+
+              <!-- course cards -->
+              <div class="text-[10px] font-bold uppercase tracking-wider text-ivory-slate-2 mb-1.5">Trilhas em andamento</div>
+              <div class="space-y-1.5">
+                <div class="bg-white border border-ivory-line rounded-lg p-2.5">
+                  <div class="flex items-center justify-between mb-1">
+                    <div class="text-[11px] font-semibold text-ivory-navy">Boas-vindas · Integração Inicial</div>
+                    <div class="text-[10px] text-ivory-slate-2 font-semibold">82%</div>
+                  </div>
+                  <div class="h-1.5 bg-ivory-line-2 rounded-full overflow-hidden">
+                    <div class="bar-fill h-full bg-gradient-to-r from-ivory-navy to-ivory-navy-3" style="--p:82%"></div>
+                  </div>
+                </div>
+                <div class="bg-white border border-ivory-line rounded-lg p-2.5">
+                  <div class="flex items-center justify-between mb-1">
+                    <div class="text-[11px] font-semibold text-ivory-navy">Compliance & LGPD</div>
+                    <div class="text-[10px] text-ivory-slate-2 font-semibold">64%</div>
+                  </div>
+                  <div class="h-1.5 bg-ivory-line-2 rounded-full overflow-hidden">
+                    <div class="bar-fill h-full bg-gradient-to-r from-ivory-orange to-ivory-orange-2" style="--p:64%"></div>
+                  </div>
+                </div>
+                <div class="bg-white border border-ivory-line rounded-lg p-2.5">
+                  <div class="flex items-center justify-between mb-1">
+                    <div class="text-[11px] font-semibold text-ivory-navy">Cultura & Valores</div>
+                    <div class="text-[10px] text-ivory-slate-2 font-semibold">95%</div>
+                  </div>
+                  <div class="h-1.5 bg-ivory-line-2 rounded-full overflow-hidden">
+                    <div class="bar-fill h-full bg-gradient-to-r from-emerald-500 to-emerald-400" style="--p:95%"></div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+
+        <!-- floating notification card -->
+        <div class="hidden sm:block absolute -bottom-6 -left-4 lg:-left-10 bg-white rounded-xl shadow-pop border border-ivory-line p-3 w-64 animate-float">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-lg bg-ivory-cream grid place-items-center flex-shrink-0">
+              <svg class="w-4 h-4 text-ivory-orange" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9H22l-6 4.4 2.3 7L12 16.9 5.7 20.3l2.3-7-6-4.4h7.6z"/></svg>
+            </div>
+            <div class="min-w-0">
+              <div class="text-[11px] font-bold text-ivory-navy">Certificação concluída</div>
+              <div class="text-[10px] text-ivory-slate-2">Maria S. · Onboarding 360° · há 2min</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- floating IA card -->
+        <div class="hidden sm:flex absolute -top-4 -right-4 lg:-right-8 bg-ivory-navy text-white rounded-xl shadow-glow border border-white/10 p-3 w-60 items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-white/10 grid place-items-center flex-shrink-0">
+            <svg class="w-4 h-4 text-ivory-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke-linecap="round"/></svg>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[11px] font-bold">Agente IA · RH</div>
+            <div class="text-[10px] text-white/70">Respondi 14 dúvidas hoje</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- logo strip -->
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-8 mt-20">
+      <p class="text-center text-[11px] uppercase tracking-[.22em] font-semibold text-ivory-slate-2">Construído com o stack que sua empresa já confia</p>
+      <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 items-center logo-mask">
+        <div class="flex items-center justify-center gap-2 text-ivory-slate font-semibold text-sm">
+          <svg class="w-5 h-5" viewBox="0 0 23 23"><path fill="#F25022" d="M1 1h10v10H1z"/><path fill="#7FBA00" d="M12 1h10v10H12z"/><path fill="#00A4EF" d="M1 12h10v10H1z"/><path fill="#FFB900" d="M12 12h10v10H12z"/></svg>
+          Microsoft 365
+        </div>
+        <div class="flex items-center justify-center gap-2 text-ivory-slate font-semibold text-sm">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#5059C9"><path d="M21 7.5h-5V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h9a2 2 0 002-2v-2.5h5A1.5 1.5 0 0022.5 13V9A1.5 1.5 0 0021 7.5z"/></svg>
+          Microsoft Teams
+        </div>
+        <div class="flex items-center justify-center gap-2 text-ivory-slate font-semibold text-sm">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#742774"><path d="M12 2l9 4.5v11L12 22 3 17.5v-11z"/></svg>
+          Power Platform
+        </div>
+        <div class="flex items-center justify-center gap-2 text-ivory-slate font-semibold text-sm">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#0078D4"><path d="M3 5l9 4 9-4-9-3zm0 6l9 4 9-4M3 17l9 4 9-4"/></svg>
+          Azure AD / Entra
+        </div>
+        <div class="flex items-center justify-center gap-2 text-ivory-slate font-semibold text-sm">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#0078D4"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/></svg>
+          SharePoint
+        </div>
+        <div class="flex items-center justify-center gap-2 text-ivory-slate font-semibold text-sm">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#0F6CBD"><path d="M4 6l8 5 8-5v12H4z"/></svg>
+          Dataverse
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── SEÇÃO PROBLEMAS ─────────── -->
+  <section id="solucao" class="py-24 bg-white relative">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="max-w-3xl scroll-fade">
+        <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.22em] text-ivory-orange">
+          <span class="w-6 h-px bg-ivory-orange"></span> O cenário atual do RH
+        </div>
+        <h2 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-ivory-navy leading-tight">
+          O RH ainda gasta tempo
+          <span class="text-ivory-slate-2">com o que não gera valor.</span>
+        </h2>
+        <p class="mt-5 text-lg text-ivory-slate leading-relaxed">
+          Planilhas paralelas, sistemas desconectados e processos manuais drenam a capacidade do time
+          e impactam diretamente a experiência do colaborador desde o primeiro dia.
+        </p>
+      </div>
+
+      <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- card -->
+        <div class="scroll-fade group p-6 rounded-2xl bg-ivory-bg border border-ivory-line hover:border-ivory-orange/40 hover:shadow-card hover:-translate-y-1 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-white border border-ivory-line grid place-items-center mb-4 group-hover:border-ivory-orange/40 transition-colors">
+            <svg class="w-5 h-5 text-ivory-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+          </div>
+          <h3 class="font-bold text-ivory-navy">Excesso de planilhas</h3>
+          <p class="mt-1.5 text-sm text-ivory-slate">Controles paralelos, versões duplicadas e perda de rastreabilidade.</p>
+        </div>
+
+        <div class="scroll-fade group p-6 rounded-2xl bg-ivory-bg border border-ivory-line hover:border-ivory-orange/40 hover:shadow-card hover:-translate-y-1 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-white border border-ivory-line grid place-items-center mb-4 group-hover:border-ivory-orange/40 transition-colors">
+            <svg class="w-5 h-5 text-ivory-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
+          </div>
+          <h3 class="font-bold text-ivory-navy">Processos manuais</h3>
+          <p class="mt-1.5 text-sm text-ivory-slate">Aprovações por e-mail, follow-up no chat, retrabalho diário do time.</p>
+        </div>
+
+        <div class="scroll-fade group p-6 rounded-2xl bg-ivory-bg border border-ivory-line hover:border-ivory-orange/40 hover:shadow-card hover:-translate-y-1 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-white border border-ivory-line grid place-items-center mb-4 group-hover:border-ivory-orange/40 transition-colors">
+            <svg class="w-5 h-5 text-ivory-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5"/></svg>
+          </div>
+          <h3 class="font-bold text-ivory-navy">Sistemas desconectados</h3>
+          <p class="mt-1.5 text-sm text-ivory-slate">Folha, ponto, LMS, ATS — cada um com sua interface e seu login.</p>
+        </div>
+
+        <div class="scroll-fade group p-6 rounded-2xl bg-ivory-bg border border-ivory-line hover:border-ivory-orange/40 hover:shadow-card hover:-translate-y-1 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-white border border-ivory-line grid place-items-center mb-4 group-hover:border-ivory-orange/40 transition-colors">
+            <svg class="w-5 h-5 text-ivory-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11l-3-3-3 3"/></svg>
+          </div>
+          <h3 class="font-bold text-ivory-navy">Onboarding descentralizado</h3>
+          <p class="mt-1.5 text-sm text-ivory-slate">Experiência fragmentada, baixo engajamento e demora para produzir.</p>
+        </div>
+
+        <div class="scroll-fade group p-6 rounded-2xl bg-ivory-bg border border-ivory-line hover:border-ivory-orange/40 hover:shadow-card hover:-translate-y-1 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-white border border-ivory-line grid place-items-center mb-4 group-hover:border-ivory-orange/40 transition-colors">
+            <svg class="w-5 h-5 text-ivory-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>
+          </div>
+          <h3 class="font-bold text-ivory-navy">Acompanhamento difícil</h3>
+          <p class="mt-1.5 text-sm text-ivory-slate">Sem visão consolidada de progresso, conclusão de trilhas e gaps.</p>
+        </div>
+
+        <div class="scroll-fade group p-6 rounded-2xl bg-ivory-bg border border-ivory-line hover:border-ivory-orange/40 hover:shadow-card hover:-translate-y-1 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-white border border-ivory-line grid place-items-center mb-4 group-hover:border-ivory-orange/40 transition-colors">
+            <svg class="w-5 h-5 text-ivory-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.5 8.5 0 018 8z"/></svg>
+          </div>
+          <h3 class="font-bold text-ivory-navy">Comunicação dispersa</h3>
+          <p class="mt-1.5 text-sm text-ivory-slate">Avisos importantes perdidos entre e-mails, grupos e murais.</p>
+        </div>
+
+        <div class="scroll-fade group p-6 rounded-2xl bg-ivory-bg border border-ivory-line hover:border-ivory-orange/40 hover:shadow-card hover:-translate-y-1 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-white border border-ivory-line grid place-items-center mb-4 group-hover:border-ivory-orange/40 transition-colors">
+            <svg class="w-5 h-5 text-ivory-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="font-bold text-ivory-navy">Riscos de compliance</h3>
+          <p class="mt-1.5 text-sm text-ivory-slate">Documentos espalhados, sem trilha de auditoria nem governança clara.</p>
+        </div>
+
+        <div class="scroll-fade group p-6 rounded-2xl bg-ivory-bg border border-ivory-line hover:border-ivory-orange/40 hover:shadow-card hover:-translate-y-1 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-white border border-ivory-line grid place-items-center mb-4 group-hover:border-ivory-orange/40 transition-colors">
+            <svg class="w-5 h-5 text-ivory-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-3-3.9M4 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="10" cy="7" r="4"/><path d="M16 3.1a4 4 0 010 7.8"/></svg>
+          </div>
+          <h3 class="font-bold text-ivory-navy">Experiência ruim</h3>
+          <p class="mt-1.5 text-sm text-ivory-slate">O colaborador percebe lentidão e atrito — o impacto chega ao turnover.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── DIFERENCIAIS ─────────── -->
+  <section id="diferenciais" class="py-24 bg-ivory-navy text-white relative overflow-hidden">
+    <div aria-hidden="true" class="absolute inset-0 opacity-[.07]">
+      <div class="absolute inset-0" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 28px 28px;"></div>
+    </div>
+    <div aria-hidden="true" class="absolute -top-40 -right-40 w-[40rem] h-[40rem] rounded-full bg-ivory-orange/20 blur-3xl"></div>
+    <div aria-hidden="true" class="absolute -bottom-40 -left-40 w-[40rem] h-[40rem] rounded-full bg-ivory-navy-3/40 blur-3xl"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="max-w-3xl scroll-fade">
+        <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.22em] text-ivory-orange">
+          <span class="w-6 h-px bg-ivory-orange"></span> Por que essa solução
+        </div>
+        <h2 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+          A experiência digital de RH
+          <span class="block text-white/60">dentro do fluxo de trabalho.</span>
+        </h2>
+        <p class="mt-5 text-lg text-white/75 leading-relaxed">
+          Não é mais um sistema. É a sua operação de pessoas embarcada no Microsoft Teams,
+          governada pela segurança da Microsoft e construída sobre Power Platform.
+        </p>
+      </div>
+
+      <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- diff card -->
+        <div class="scroll-fade group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[.08] hover:border-ivory-orange/40 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-ivory-orange/15 border border-ivory-orange/30 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-ivory-orange" viewBox="0 0 24 24" fill="currentColor"><path d="M21 7.5h-5V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h9a2 2 0 002-2v-2.5h5A1.5 1.5 0 0022.5 13V9A1.5 1.5 0 0021 7.5z"/></svg>
+          </div>
+          <h3 class="font-bold text-white text-lg">100% no Microsoft Teams</h3>
+          <p class="mt-2 text-sm text-white/70 leading-relaxed">Sem nova janela, sem nova URL. O colaborador continua exatamente onde já trabalha.</p>
+        </div>
+
+        <div class="scroll-fade group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[.08] hover:border-ivory-orange/40 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-ivory-orange/15 border border-ivory-orange/30 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-ivory-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <h3 class="font-bold text-white text-lg">Segurança Microsoft</h3>
+          <p class="mt-2 text-sm text-white/70 leading-relaxed">Identidade, MFA, DLP e governança herdadas do tenant. Zero camadas adicionais.</p>
+        </div>
+
+        <div class="scroll-fade group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[.08] hover:border-ivory-orange/40 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-ivory-orange/15 border border-ivory-orange/30 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-ivory-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <h3 class="font-bold text-white text-lg">Single Sign-On (SSO)</h3>
+          <p class="mt-2 text-sm text-white/70 leading-relaxed">Login único via Microsoft Entra. Nenhuma nova senha para o colaborador gerenciar.</p>
+        </div>
+
+        <div class="scroll-fade group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[.08] hover:border-ivory-orange/40 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-ivory-orange/15 border border-ivory-orange/30 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-ivory-orange" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l9 4.5v11L12 22 3 17.5v-11z"/></svg>
+          </div>
+          <h3 class="font-bold text-white text-lg">Power Platform</h3>
+          <p class="mt-2 text-sm text-white/70 leading-relaxed">Power Apps, Power Automate e Dataverse — baixo código, governança nativa.</p>
+        </div>
+
+        <div class="scroll-fade group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[.08] hover:border-ivory-orange/40 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-ivory-orange/15 border border-ivory-orange/30 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-ivory-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>
+          </div>
+          <h3 class="font-bold text-white text-lg">Implantação rápida</h3>
+          <p class="mt-2 text-sm text-white/70 leading-relaxed">Semanas, não meses. Blueprint pronto, integração ágil com o tenant existente.</p>
+        </div>
+
+        <div class="scroll-fade group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[.08] hover:border-ivory-orange/40 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-ivory-orange/15 border border-ivory-orange/30 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-ivory-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+          </div>
+          <h3 class="font-bold text-white text-lg">Escalável</h3>
+          <p class="mt-2 text-sm text-white/70 leading-relaxed">De centenas a dezenas de milhares de colaboradores, com a robustez do Azure.</p>
+        </div>
+
+        <div class="scroll-fade group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[.08] hover:border-ivory-orange/40 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-ivory-orange/15 border border-ivory-orange/30 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-ivory-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h3 class="font-bold text-white text-lg">Baixo atrito com TI</h3>
+          <p class="mt-2 text-sm text-white/70 leading-relaxed">Roda sobre stack já homologado. Sem novos fornecedores, sem nova exceção de firewall.</p>
+        </div>
+
+        <div class="scroll-fade group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[.08] hover:border-ivory-orange/40 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-ivory-orange/15 border border-ivory-orange/30 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-ivory-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
+          </div>
+          <h3 class="font-bold text-white text-lg">Automação de processos</h3>
+          <p class="mt-2 text-sm text-white/70 leading-relaxed">Aprovações, notificações, follow-ups e integrações com governança e auditoria.</p>
+        </div>
+
+        <div class="scroll-fade group relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[.08] hover:border-ivory-orange/40 transition-all">
+          <div class="w-11 h-11 rounded-xl bg-ivory-orange/15 border border-ivory-orange/30 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-ivory-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.2 16.2l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.2 7.8l2.8-2.8"/></svg>
+          </div>
+          <h3 class="font-bold text-white text-lg">IA pronta para evoluir</h3>
+          <p class="mt-2 text-sm text-white/70 leading-relaxed">Copilot, agentes de RH e geração de conteúdo de capacitação no roadmap nativo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── MÓDULOS / FUNCIONALIDADES ─────────── -->
+  <section id="modulos" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="max-w-3xl scroll-fade">
+        <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.22em] text-ivory-orange">
+          <span class="w-6 h-px bg-ivory-orange"></span> Módulos da solução
+        </div>
+        <h2 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-ivory-navy leading-tight">
+          Toda a jornada do colaborador,
+          <span class="text-ivory-slate-2">em um único fluxo.</span>
+        </h2>
+        <p class="mt-5 text-lg text-ivory-slate leading-relaxed">
+          Módulos integrados que conectam admissão, capacitação, comunicação e indicadores —
+          com a interface familiar do Teams.
+        </p>
+      </div>
+
+      <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- module card -->
+        <article class="scroll-fade group relative p-6 rounded-2xl bg-white border border-ivory-line hover:border-ivory-navy/30 hover:shadow-card transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <h3 class="font-bold text-ivory-navy text-lg">Portal do colaborador</h3>
+          </div>
+          <p class="mt-3 text-sm text-ivory-slate leading-relaxed">Hub pessoal com dados, solicitações, documentos e acessos rápidos no Teams.</p>
+        </article>
+
+        <article class="scroll-fade group relative p-6 rounded-2xl bg-white border border-ivory-line hover:border-ivory-navy/30 hover:shadow-card transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+            </div>
+            <h3 class="font-bold text-ivory-navy text-lg">Onboarding digital</h3>
+          </div>
+          <p class="mt-3 text-sm text-ivory-slate leading-relaxed">Fluxo guiado do "Day 0" ao "Day 90" com etapas, donos e prazos automáticos.</p>
+        </article>
+
+        <article class="scroll-fade group relative p-6 rounded-2xl bg-white border border-ivory-line hover:border-ivory-navy/30 hover:shadow-card transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+            </div>
+            <h3 class="font-bold text-ivory-navy text-lg">Trilhas de treinamento</h3>
+          </div>
+          <p class="mt-3 text-sm text-ivory-slate leading-relaxed">Conteúdo em vídeo, leitura e quizzes. Conclusão monitorada por gestor e RH.</p>
+        </article>
+
+        <article class="scroll-fade group relative p-6 rounded-2xl bg-white border border-ivory-line hover:border-ivory-navy/30 hover:shadow-card transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            </div>
+            <h3 class="font-bold text-ivory-navy text-lg">Checklists</h3>
+          </div>
+          <p class="mt-3 text-sm text-ivory-slate leading-relaxed">Roteiros padronizados por cargo e área, com responsáveis e SLA.</p>
+        </article>
+
+        <article class="scroll-fade group relative p-6 rounded-2xl bg-white border border-ivory-line hover:border-ivory-navy/30 hover:shadow-card transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+            </div>
+            <h3 class="font-bold text-ivory-navy text-lg">Gestão documental</h3>
+          </div>
+          <p class="mt-3 text-sm text-ivory-slate leading-relaxed">Upload, validação e assinatura digital com versionamento e auditoria.</p>
+        </article>
+
+        <article class="scroll-fade group relative p-6 rounded-2xl bg-white border border-ivory-line hover:border-ivory-navy/30 hover:shadow-card transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M9 11l3 3L22 4"/></svg>
+            </div>
+            <h3 class="font-bold text-ivory-navy text-lg">Aprovações</h3>
+          </div>
+          <p class="mt-3 text-sm text-ivory-slate leading-relaxed">Fluxos de aprovação multi-nível direto no chat do Teams. Tudo registrado.</p>
+        </article>
+
+        <article class="scroll-fade group relative p-6 rounded-2xl bg-white border border-ivory-line hover:border-ivory-navy/30 hover:shadow-card transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>
+            </div>
+            <h3 class="font-bold text-ivory-navy text-lg">Dashboards</h3>
+          </div>
+          <p class="mt-3 text-sm text-ivory-slate leading-relaxed">Indicadores em Power BI embedded: progresso, conclusão, NPS e SLA.</p>
+        </article>
+
+        <article class="scroll-fade group relative p-6 rounded-2xl bg-white border border-ivory-line hover:border-ivory-navy/30 hover:shadow-card transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.5 8.5 0 018 8z"/></svg>
+            </div>
+            <h3 class="font-bold text-ivory-navy text-lg">Comunicação interna</h3>
+          </div>
+          <p class="mt-3 text-sm text-ivory-slate leading-relaxed">Avisos segmentados por grupo, área e cargo. Confirmação de leitura nativa.</p>
+        </article>
+
+        <article class="scroll-fade group relative p-6 rounded-2xl bg-gradient-to-br from-ivory-navy to-ivory-navy-3 text-white border border-ivory-navy hover:shadow-pop transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-ivory-orange text-white grid place-items-center">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.2 16.2l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.2 7.8l2.8-2.8"/></svg>
+            </div>
+            <div>
+              <span class="text-[10px] uppercase tracking-wider font-bold text-ivory-orange">Inteligência Artificial</span>
+              <h3 class="font-bold text-white text-lg">Agente de IA para RH</h3>
+            </div>
+          </div>
+          <p class="mt-3 text-sm text-white/75 leading-relaxed">Tira dúvidas, orienta processos e personaliza conteúdo — embarcado no Copilot.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── PLATAFORMA (SCREENS) ─────────── -->
+  <section id="plataforma" class="py-24 bg-gradient-to-b from-ivory-bg to-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto text-center scroll-fade">
+        <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.22em] text-ivory-orange">
+          <span class="w-6 h-px bg-ivory-orange"></span> Veja a plataforma <span class="w-6 h-px bg-ivory-orange"></span>
+        </div>
+        <h2 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-ivory-navy leading-tight">
+          Uma experiência enterprise,
+          <span class="block text-ivory-slate-2">com a velocidade do Teams.</span>
+        </h2>
+      </div>
+
+      <div class="mt-14 grid lg:grid-cols-3 gap-5">
+        <!-- Screen 1: Trilhas -->
+        <div class="scroll-fade lg:col-span-2 bg-white rounded-2xl shadow-card border border-ivory-line p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-[11px] uppercase tracking-wider text-ivory-slate-2 font-bold">Trilhas de aprendizagem</div>
+              <div class="text-lg font-bold text-ivory-navy">Catálogo de capacitação</div>
+            </div>
+            <div class="hidden sm:flex items-center gap-2 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-ivory-cream text-ivory-navy font-semibold">Todas</span>
+              <span class="px-2.5 py-1 rounded-full text-ivory-slate-2 font-semibold">Obrigatórias</span>
+              <span class="px-2.5 py-1 rounded-full text-ivory-slate-2 font-semibold">Em alta</span>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <!-- course tile -->
+            <div class="group rounded-xl border border-ivory-line hover:border-ivory-orange/40 hover:shadow-soft transition-all overflow-hidden">
+              <div class="h-24 bg-gradient-to-br from-ivory-navy to-ivory-navy-3 relative">
+                <div aria-hidden="true" class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at 20% 30%, white 1px, transparent 0); background-size: 16px 16px;"></div>
+                <span class="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider bg-white/15 border border-white/20 text-white px-2 py-0.5 rounded-full">Obrigatório</span>
+              </div>
+              <div class="p-3">
+                <div class="text-[11px] text-ivory-slate-2 font-semibold">Compliance</div>
+                <div class="text-sm font-bold text-ivory-navy">LGPD na prática</div>
+                <div class="mt-2 h-1 bg-ivory-line-2 rounded-full overflow-hidden">
+                  <div class="bar-fill h-full bg-ivory-orange" style="--p:72%"></div>
+                </div>
+                <div class="mt-1.5 flex items-center justify-between text-[11px] text-ivory-slate-2">
+                  <span>4 de 6 módulos</span>
+                  <span class="font-bold text-ivory-navy">72%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="group rounded-xl border border-ivory-line hover:border-ivory-orange/40 hover:shadow-soft transition-all overflow-hidden">
+              <div class="h-24 bg-gradient-to-br from-ivory-orange to-ivory-orange-2 relative">
+                <div aria-hidden="true" class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle at 80% 20%, white 1px, transparent 0); background-size: 20px 20px;"></div>
+                <span class="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider bg-white/20 border border-white/30 text-white px-2 py-0.5 rounded-full">Em alta</span>
+              </div>
+              <div class="p-3">
+                <div class="text-[11px] text-ivory-slate-2 font-semibold">Liderança</div>
+                <div class="text-sm font-bold text-ivory-navy">Gestão de pessoas 4.0</div>
+                <div class="mt-2 h-1 bg-ivory-line-2 rounded-full overflow-hidden">
+                  <div class="bar-fill h-full bg-emerald-500" style="--p:95%"></div>
+                </div>
+                <div class="mt-1.5 flex items-center justify-between text-[11px] text-ivory-slate-2">
+                  <span>Concluído</span>
+                  <span class="font-bold text-emerald-600">95%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="group rounded-xl border border-ivory-line hover:border-ivory-orange/40 hover:shadow-soft transition-all overflow-hidden">
+              <div class="h-24 bg-gradient-to-br from-emerald-600 to-emerald-500 relative">
+                <div aria-hidden="true" class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle at 30% 70%, white 1px, transparent 0); background-size: 18px 18px;"></div>
+                <span class="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider bg-white/20 border border-white/30 text-white px-2 py-0.5 rounded-full">Novo</span>
+              </div>
+              <div class="p-3">
+                <div class="text-[11px] text-ivory-slate-2 font-semibold">Cultura</div>
+                <div class="text-sm font-bold text-ivory-navy">Boas-vindas à empresa</div>
+                <div class="mt-2 h-1 bg-ivory-line-2 rounded-full overflow-hidden">
+                  <div class="bar-fill h-full bg-ivory-navy" style="--p:40%"></div>
+                </div>
+                <div class="mt-1.5 flex items-center justify-between text-[11px] text-ivory-slate-2">
+                  <span>2 de 5 módulos</span>
+                  <span class="font-bold text-ivory-navy">40%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="group rounded-xl border border-ivory-line hover:border-ivory-orange/40 hover:shadow-soft transition-all overflow-hidden">
+              <div class="h-24 bg-gradient-to-br from-violet-600 to-violet-500 relative">
+                <div aria-hidden="true" class="absolute inset-0 opacity-25" style="background-image: radial-gradient(circle at 70% 50%, white 1px, transparent 0); background-size: 22px 22px;"></div>
+                <span class="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider bg-white/20 border border-white/30 text-white px-2 py-0.5 rounded-full">Avançado</span>
+              </div>
+              <div class="p-3">
+                <div class="text-[11px] text-ivory-slate-2 font-semibold">Tecnologia</div>
+                <div class="text-sm font-bold text-ivory-navy">Power Platform para RH</div>
+                <div class="mt-2 h-1 bg-ivory-line-2 rounded-full overflow-hidden">
+                  <div class="bar-fill h-full bg-ivory-navy" style="--p:25%"></div>
+                </div>
+                <div class="mt-1.5 flex items-center justify-between text-[11px] text-ivory-slate-2">
+                  <span>1 de 8 módulos</span>
+                  <span class="font-bold text-ivory-navy">25%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 2: Indicadores -->
+        <div class="scroll-fade bg-white rounded-2xl shadow-card border border-ivory-line p-6 flex flex-col">
+          <div>
+            <div class="text-[11px] uppercase tracking-wider text-ivory-slate-2 font-bold">Indicadores</div>
+            <div class="text-lg font-bold text-ivory-navy">Visão do gestor</div>
+          </div>
+
+          <div class="mt-4 flex items-center gap-4">
+            <!-- ring -->
+            <div class="relative w-28 h-28">
+              <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#EEF2F6" stroke-width="3"></circle>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F35B04" stroke-width="3" stroke-linecap="round" stroke-dasharray="87,100"></circle>
+              </svg>
+              <div class="absolute inset-0 grid place-items-center">
+                <div class="text-center">
+                  <div class="text-2xl font-extrabold text-ivory-navy leading-none">87%</div>
+                  <div class="text-[10px] text-ivory-slate-2 font-semibold">Conclusão</div>
+                </div>
+              </div>
+            </div>
+            <div class="flex-1 space-y-2">
+              <div>
+                <div class="flex items-center justify-between text-[11px] text-ivory-slate-2 font-semibold">
+                  <span>Trilhas</span><span class="text-ivory-navy">94%</span>
+                </div>
+                <div class="h-1.5 bg-ivory-line-2 rounded-full overflow-hidden"><div class="bar-fill h-full bg-ivory-navy" style="--p:94%"></div></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-[11px] text-ivory-slate-2 font-semibold">
+                  <span>Documentos</span><span class="text-ivory-navy">82%</span>
+                </div>
+                <div class="h-1.5 bg-ivory-line-2 rounded-full overflow-hidden"><div class="bar-fill h-full bg-ivory-orange" style="--p:82%"></div></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between text-[11px] text-ivory-slate-2 font-semibold">
+                  <span>Engajamento</span><span class="text-ivory-navy">76%</span>
+                </div>
+                <div class="h-1.5 bg-ivory-line-2 rounded-full overflow-hidden"><div class="bar-fill h-full bg-emerald-500" style="--p:76%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-2 gap-2">
+            <div class="rounded-lg bg-ivory-bg border border-ivory-line p-2.5">
+              <div class="text-[10px] text-ivory-slate-2 uppercase font-bold tracking-wider">NPS Interno</div>
+              <div class="text-lg font-extrabold text-ivory-navy leading-tight">+62</div>
+            </div>
+            <div class="rounded-lg bg-ivory-bg border border-ivory-line p-2.5">
+              <div class="text-[10px] text-ivory-slate-2 uppercase font-bold tracking-wider">Tempo médio</div>
+              <div class="text-lg font-extrabold text-ivory-navy leading-tight">11d</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 3: Certificações -->
+        <div class="scroll-fade bg-white rounded-2xl shadow-card border border-ivory-line p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-[11px] uppercase tracking-wider text-ivory-slate-2 font-bold">Certificações</div>
+              <div class="text-lg font-bold text-ivory-navy">Mais recentes</div>
+            </div>
+            <span class="text-xs font-semibold text-ivory-orange">Ver todas →</span>
+          </div>
+          <ul class="mt-4 divide-y divide-ivory-line">
+            <li class="py-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-ivory-cream grid place-items-center">
+                <svg class="w-4 h-4 text-ivory-orange" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-semibold text-ivory-navy truncate">LGPD na prática</div>
+                <div class="text-[11px] text-ivory-slate-2">Maria Souza · há 2h</div>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Emitido</span>
+            </li>
+            <li class="py-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-ivory-cream grid place-items-center">
+                <svg class="w-4 h-4 text-ivory-orange" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-semibold text-ivory-navy truncate">Onboarding 360°</div>
+                <div class="text-[11px] text-ivory-slate-2">João Lima · hoje</div>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Emitido</span>
+            </li>
+            <li class="py-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-ivory-cream grid place-items-center">
+                <svg class="w-4 h-4 text-ivory-orange" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-semibold text-ivory-navy truncate">Liderança 4.0</div>
+                <div class="text-[11px] text-ivory-slate-2">Ana Pires · ontem</div>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-ivory-orange bg-ivory-cream px-2 py-0.5 rounded">Pendente</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Screen 4: Comunicação -->
+        <div class="scroll-fade lg:col-span-2 bg-white rounded-2xl shadow-card border border-ivory-line p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-[11px] uppercase tracking-wider text-ivory-slate-2 font-bold">Comunicação interna</div>
+              <div class="text-lg font-bold text-ivory-navy">Avisos para sua equipe</div>
+            </div>
+            <button class="text-xs font-semibold text-white bg-ivory-orange hover:bg-ivory-orange-2 px-3 py-1.5 rounded-lg shadow-cta transition">Novo aviso</button>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="rounded-xl border border-ivory-line p-4 hover:border-ivory-navy/30 transition">
+              <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-ivory-orange">
+                <span class="w-1.5 h-1.5 rounded-full bg-ivory-orange animate-pulse-soft"></span> Prioridade alta
+              </div>
+              <div class="mt-2 text-sm font-bold text-ivory-navy">Treinamento obrigatório de segurança</div>
+              <p class="mt-1.5 text-xs text-ivory-slate leading-relaxed">Todos os colaboradores devem concluir o módulo até sexta-feira.</p>
+              <div class="mt-3 flex items-center justify-between text-[11px] text-ivory-slate-2">
+                <span>312 / 380 visualizaram</span>
+                <span class="font-bold text-ivory-navy">82%</span>
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-ivory-line p-4 hover:border-ivory-navy/30 transition">
+              <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Informativo
+              </div>
+              <div class="mt-2 text-sm font-bold text-ivory-navy">Pesquisa de clima · 2º trimestre</div>
+              <p class="mt-1.5 text-xs text-ivory-slate leading-relaxed">Participação anônima. Resultados são consolidados pelo RH.</p>
+              <div class="mt-3 flex items-center justify-between text-[11px] text-ivory-slate-2">
+                <span>248 / 380 responderam</span>
+                <span class="font-bold text-ivory-navy">65%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── POR QUE POWER PLATFORM ─────────── -->
+  <section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-12 gap-12 items-start">
+      <div class="lg:col-span-5 scroll-fade lg:sticky lg:top-28">
+        <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.22em] text-ivory-orange">
+          <span class="w-6 h-px bg-ivory-orange"></span> Por que Power Platform
+        </div>
+        <h2 class="mt-4 text-3xl sm:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight text-ivory-navy leading-tight">
+          O caminho de menor atrito,
+          <span class="block text-ivory-slate-2">com maior governança.</span>
+        </h2>
+        <p class="mt-5 text-lg text-ivory-slate leading-relaxed">
+          Quando a base é Microsoft, não há motivo para introduzir uma nova stack só para o RH.
+          Power Platform entrega velocidade enterprise, sem abrir mão de controle.
+        </p>
+
+        <div class="mt-8 inline-flex items-center gap-3 p-4 rounded-2xl bg-ivory-cream border border-ivory-cream-2">
+          <div class="w-10 h-10 rounded-lg bg-ivory-orange text-white grid place-items-center flex-shrink-0">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>
+          </div>
+          <p class="text-sm text-ivory-navy"><strong>Implantação típica em semanas</strong>, aproveitando licenças Microsoft 365 que sua empresa já possui.</p>
+        </div>
+      </div>
+
+      <ul class="lg:col-span-7 space-y-3">
+        <li class="scroll-fade flex gap-4 p-5 rounded-2xl bg-ivory-bg border border-ivory-line">
+          <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center flex-shrink-0 font-bold">01</div>
+          <div>
+            <h3 class="font-bold text-ivory-navy">Rapidez de entrega</h3>
+            <p class="mt-1 text-sm text-ivory-slate">Power Apps + Power Automate aceleram a construção de fluxos de RH em frações do tempo de um sistema tradicional.</p>
+          </div>
+        </li>
+        <li class="scroll-fade flex gap-4 p-5 rounded-2xl bg-ivory-bg border border-ivory-line">
+          <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center flex-shrink-0 font-bold">02</div>
+          <div>
+            <h3 class="font-bold text-ivory-navy">Segurança enterprise</h3>
+            <p class="mt-1 text-sm text-ivory-slate">Toda a stack roda sobre Entra ID, Dataverse e políticas DLP — controles que sua TI já governa.</p>
+          </div>
+        </li>
+        <li class="scroll-fade flex gap-4 p-5 rounded-2xl bg-ivory-bg border border-ivory-line">
+          <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center flex-shrink-0 font-bold">03</div>
+          <div>
+            <h3 class="font-bold text-ivory-navy">Governança nativa</h3>
+            <p class="mt-1 text-sm text-ivory-slate">Center of Excellence, environments segregados e trilhas de auditoria como parte do produto.</p>
+          </div>
+        </li>
+        <li class="scroll-fade flex gap-4 p-5 rounded-2xl bg-ivory-bg border border-ivory-line">
+          <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center flex-shrink-0 font-bold">04</div>
+          <div>
+            <h3 class="font-bold text-ivory-navy">Aproveitamento do M365</h3>
+            <p class="mt-1 text-sm text-ivory-slate">Reuso das licenças já existentes — menor custo total de adoção, retorno mais rápido.</p>
+          </div>
+        </li>
+        <li class="scroll-fade flex gap-4 p-5 rounded-2xl bg-ivory-bg border border-ivory-line">
+          <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center flex-shrink-0 font-bold">05</div>
+          <div>
+            <h3 class="font-bold text-ivory-navy">Flexibilidade</h3>
+            <p class="mt-1 text-sm text-ivory-slate">Cada processo do seu RH adaptado à sua realidade — sem amarrar a empresa a um produto fechado.</p>
+          </div>
+        </li>
+        <li class="scroll-fade flex gap-4 p-5 rounded-2xl bg-ivory-bg border border-ivory-line">
+          <div class="w-10 h-10 rounded-lg bg-ivory-navy text-white grid place-items-center flex-shrink-0 font-bold">06</div>
+          <div>
+            <h3 class="font-bold text-ivory-navy">Integração fácil</h3>
+            <p class="mt-1 text-sm text-ivory-slate">Conectores prontos para Folha, Ponto, ATS, LMS e ERPs — APIs e dataflows orquestrados.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─────────── RESULTADOS / KPIs ─────────── -->
+  <section id="resultados" class="py-24 bg-ivory-cream relative overflow-hidden">
+    <div aria-hidden="true" class="absolute -top-32 -right-32 w-[28rem] h-[28rem] rounded-full bg-white/40 blur-3xl"></div>
+    <div aria-hidden="true" class="absolute -bottom-32 -left-32 w-[28rem] h-[28rem] rounded-full bg-ivory-orange/20 blur-3xl"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="max-w-3xl scroll-fade">
+        <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.22em] text-ivory-orange">
+          <span class="w-6 h-px bg-ivory-orange"></span> Impacto esperado
+        </div>
+        <h2 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-ivory-navy leading-tight">
+          Resultados mensuráveis,
+          <span class="block text-ivory-slate-2">desde o primeiro ciclo.</span>
+        </h2>
+        <p class="mt-5 text-lg text-ivory-slate leading-relaxed max-w-2xl">
+          Referência baseada em projetos comparáveis de digitalização de RH em médias e grandes empresas.
+        </p>
+      </div>
+
+      <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="scroll-fade rounded-2xl bg-white border border-white shadow-card p-6">
+          <div class="text-5xl font-extrabold text-ivory-navy leading-none tracking-tight">-65%</div>
+          <p class="mt-3 text-sm font-semibold text-ivory-navy">Tempo de onboarding</p>
+          <p class="mt-1 text-xs text-ivory-slate">Da admissão à produtividade plena, com fluxos automatizados.</p>
+        </div>
+        <div class="scroll-fade rounded-2xl bg-white border border-white shadow-card p-6">
+          <div class="text-5xl font-extrabold text-ivory-navy leading-none tracking-tight">-70%</div>
+          <p class="mt-3 text-sm font-semibold text-ivory-navy">Atividades manuais</p>
+          <p class="mt-1 text-xs text-ivory-slate">Aprovações, follow-ups e coleta de dados rodam por automação.</p>
+        </div>
+        <div class="scroll-fade rounded-2xl bg-white border border-white shadow-card p-6">
+          <div class="text-5xl font-extrabold text-ivory-orange leading-none tracking-tight">+3x</div>
+          <p class="mt-3 text-sm font-semibold text-ivory-navy">Engajamento em trilhas</p>
+          <p class="mt-1 text-xs text-ivory-slate">Conteúdo no Teams, lembretes contextuais e gamificação leve.</p>
+        </div>
+        <div class="scroll-fade rounded-2xl bg-white border border-white shadow-card p-6">
+          <div class="text-5xl font-extrabold text-ivory-navy leading-none tracking-tight">100%</div>
+          <p class="mt-3 text-sm font-semibold text-ivory-navy">Processos centralizados</p>
+          <p class="mt-1 text-xs text-ivory-slate">Trilha de auditoria única, com governança Microsoft.</p>
+        </div>
+      </div>
+
+      <div class="mt-10 grid md:grid-cols-3 gap-4 scroll-fade">
+        <div class="rounded-2xl bg-ivory-navy text-white p-6">
+          <div class="text-xs font-bold uppercase tracking-wider text-ivory-orange">Ganho operacional</div>
+          <div class="mt-2 text-2xl font-extrabold leading-tight">Time de RH foca em pessoas, não em planilhas.</div>
+        </div>
+        <div class="rounded-2xl bg-white border border-ivory-line p-6">
+          <div class="text-xs font-bold uppercase tracking-wider text-ivory-slate-2">Ganho de experiência</div>
+          <div class="mt-2 text-2xl font-extrabold text-ivory-navy leading-tight">Colaborador encontra tudo em um único lugar.</div>
+        </div>
+        <div class="rounded-2xl bg-white border border-ivory-line p-6">
+          <div class="text-xs font-bold uppercase tracking-wider text-ivory-slate-2">Ganho de governança</div>
+          <div class="mt-2 text-2xl font-extrabold text-ivory-navy leading-tight">Auditoria, compliance e trilha de evidências nativas.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── CTA FINAL ─────────── -->
+  <section id="contato" class="py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-6 lg:px-8">
+      <div class="relative rounded-3xl bg-ivory-navy text-white p-10 lg:p-16 overflow-hidden shadow-glow">
+        <div aria-hidden="true" class="absolute inset-0 opacity-[.08]" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 24px 24px;"></div>
+        <div aria-hidden="true" class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-ivory-orange/30 blur-3xl"></div>
+        <div aria-hidden="true" class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-ivory-navy-3/40 blur-3xl"></div>
+
+        <div class="relative grid lg:grid-cols-2 gap-10 items-center">
+          <div class="scroll-fade">
+            <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.22em] text-ivory-orange">
+              <span class="w-6 h-px bg-ivory-orange"></span> Próximo passo
+            </div>
+            <h2 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+              Leve o RH para dentro do
+              <span class="block text-ivory-orange">fluxo de trabalho da empresa.</span>
+            </h2>
+            <p class="mt-5 text-lg text-white/75 max-w-xl leading-relaxed">
+              Demonstração executiva de 30 minutos, sob medida para o seu contexto e o seu stack Microsoft 365.
+            </p>
+
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <a href="mailto:contato@ivoryit.com.br?subject=Demonstra%C3%A7%C3%A3o%20RH%20Digital%20no%20Teams" class="inline-flex items-center gap-2 bg-ivory-orange hover:bg-ivory-orange-2 text-white font-semibold px-6 py-3.5 rounded-xl shadow-cta hover:-translate-y-0.5 transition-all ring-focus">
+                Solicitar demonstração
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+              <a href="#modulos" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 text-white font-semibold px-6 py-3.5 rounded-xl border border-white/20 transition-all ring-focus">
+                Conhecer módulos
+              </a>
+            </div>
+          </div>
+
+          <!-- mini form -->
+          <form class="scroll-fade bg-white text-ivory-navy rounded-2xl p-6 shadow-card" onsubmit="event.preventDefault(); this.querySelector('button').innerText='Recebemos seu contato'; this.querySelector('button').disabled=true;">
+            <div class="text-xs font-bold uppercase tracking-[.18em] text-ivory-orange">Fale com um especialista</div>
+            <h3 class="mt-1 text-xl font-bold">Resposta em até 1 dia útil</h3>
+
+            <div class="mt-5 grid grid-cols-1 gap-3">
+              <label class="block">
+                <span class="text-xs font-semibold text-ivory-slate-2">Nome</span>
+                <input required type="text" class="mt-1 w-full px-3.5 py-2.5 rounded-lg border border-ivory-line bg-white focus:outline-none focus:border-ivory-orange focus:ring-2 focus:ring-ivory-orange/20 text-sm" placeholder="Como devemos te chamar?" />
+              </label>
+              <label class="block">
+                <span class="text-xs font-semibold text-ivory-slate-2">E-mail corporativo</span>
+                <input required type="email" class="mt-1 w-full px-3.5 py-2.5 rounded-lg border border-ivory-line bg-white focus:outline-none focus:border-ivory-orange focus:ring-2 focus:ring-ivory-orange/20 text-sm" placeholder="voce@empresa.com.br" />
+              </label>
+              <label class="block">
+                <span class="text-xs font-semibold text-ivory-slate-2">Empresa</span>
+                <input type="text" class="mt-1 w-full px-3.5 py-2.5 rounded-lg border border-ivory-line bg-white focus:outline-none focus:border-ivory-orange focus:ring-2 focus:ring-ivory-orange/20 text-sm" placeholder="Razão social" />
+              </label>
+            </div>
+
+            <button type="submit" class="mt-5 w-full inline-flex items-center justify-center gap-2 bg-ivory-orange hover:bg-ivory-orange-2 text-white font-semibold px-5 py-3 rounded-lg shadow-cta transition-all ring-focus">
+              Solicitar contato
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <p class="mt-3 text-[11px] text-ivory-slate-2 leading-relaxed">Seus dados são tratados conforme a LGPD e usados apenas para retorno comercial.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── FOOTER ─────────── -->
+  <footer class="bg-ivory-navy-2 text-white/75 py-12">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="grid md:grid-cols-12 gap-8 items-start">
+        <div class="md:col-span-5">
+          <div class="text-xl font-extrabold tracking-tight text-white">IVORY<span class="text-ivory-orange">.</span></div>
+          <p class="mt-3 text-sm leading-relaxed max-w-md">
+            Consultoria de tecnologia especializada em desenvolvimento de software, automação e IA corporativa.
+            Construímos a sua experiência digital de RH dentro do Microsoft Teams.
+          </p>
+        </div>
+
+        <div class="md:col-span-3">
+          <div class="text-[11px] font-bold uppercase tracking-[.18em] text-white">Solução</div>
+          <ul class="mt-3 space-y-2 text-sm">
+            <li><a href="#solucao" class="hover:text-white transition-colors">Visão geral</a></li>
+            <li><a href="#diferenciais" class="hover:text-white transition-colors">Diferenciais</a></li>
+            <li><a href="#modulos" class="hover:text-white transition-colors">Módulos</a></li>
+            <li><a href="#resultados" class="hover:text-white transition-colors">Resultados</a></li>
+          </ul>
+        </div>
+
+        <div class="md:col-span-4">
+          <div class="text-[11px] font-bold uppercase tracking-[.18em] text-white">Contato</div>
+          <ul class="mt-3 space-y-2 text-sm">
+            <li><a href="mailto:contato@ivoryit.com.br" class="hover:text-white transition-colors">contato@ivoryit.com.br</a></li>
+            <li><a href="https://ivoryit.com.br" class="hover:text-white transition-colors" target="_blank" rel="noopener">ivoryit.com.br</a></li>
+            <li><a href="https://www.linkedin.com/company/ivory-it" class="hover:text-white transition-colors" target="_blank" rel="noopener">LinkedIn · Ivory</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-white/60">
+        <div>© <span id="year"></span> Ivory IT. Todos os direitos reservados.</div>
+        <div class="flex items-center gap-4">
+          <a href="#" class="hover:text-white">Política de privacidade</a>
+          <a href="#" class="hover:text-white">Termos de uso</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Scroll-reveal
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      }
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.scroll-fade').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
