@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Procurly — Centro de Operações de Suprimentos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+        colors: {
+          ink: {
+            950: '#070a10',
+            900: '#0b0f17',
+            850: '#0f1420',
+            800: '#141a28',
+            750: '#1a2233',
+            700: '#222c42',
+          },
+          brand: {
+            300: '#7dd3fc',
+            400: '#38bdf8',
+            500: '#0ea5e9',
+            600: '#0284c7',
+          }
+        },
+        boxShadow: {
+          card: '0 1px 0 0 rgba(255,255,255,0.03) inset, 0 8px 30px -12px rgba(0,0,0,0.7)',
+          glow: '0 0 0 1px rgba(56,189,248,0.25), 0 8px 40px -8px rgba(56,189,248,0.25)',
+        }
+      }
+    }
+  }
+</script>
+<style>
+  :root { color-scheme: dark; }
+  body { background:#070a10; }
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#1f2937;border-radius:99px;border:2px solid #070a10}
+  ::-webkit-scrollbar-thumb:hover{background:#374151}
+
+  .grid-bg{
+    background-image:
+      radial-gradient(circle at 18% -10%, rgba(14,165,233,0.10), transparent 45%),
+      radial-gradient(circle at 90% 0%, rgba(99,102,241,0.07), transparent 40%);
+  }
+  .glass{ background:rgba(15,20,32,0.72); backdrop-filter:saturate(140%) blur(14px); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .fade-up{ animation:fadeUp .45s cubic-bezier(.22,1,.36,1) both }
+  .stagger > * { animation:fadeUp .5s cubic-bezier(.22,1,.36,1) both }
+  .stagger > *:nth-child(1){animation-delay:.02s}
+  .stagger > *:nth-child(2){animation-delay:.06s}
+  .stagger > *:nth-child(3){animation-delay:.10s}
+  .stagger > *:nth-child(4){animation-delay:.14s}
+  .stagger > *:nth-child(5){animation-delay:.18s}
+  .stagger > *:nth-child(6){animation-delay:.22s}
+
+  @keyframes shimmer { 100%{ transform:translateX(100%) } }
+  .skeleton{ position:relative; overflow:hidden; background:#141a28; }
+  .skeleton::after{
+    content:''; position:absolute; inset:0; transform:translateX(-100%);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
+    animation:shimmer 1.4s infinite;
+  }
+
+  @keyframes pulseDot { 0%{box-shadow:0 0 0 0 rgba(239,68,68,.55)} 70%{box-shadow:0 0 0 7px rgba(239,68,68,0)} 100%{box-shadow:0 0 0 0 rgba(239,68,68,0)} }
+  .pulse-red{ animation:pulseDot 2s infinite }
+  @keyframes pulseAmber { 0%{box-shadow:0 0 0 0 rgba(245,158,11,.5)} 70%{box-shadow:0 0 0 7px rgba(245,158,11,0)} 100%{box-shadow:0 0 0 0 rgba(245,158,11,0)} }
+  .pulse-amber{ animation:pulseAmber 2.4s infinite }
+
+  @keyframes flowdash { to { stroke-dashoffset:-22 } }
+  .flow-line{ stroke-dasharray:5 7; animation:flowdash 1s linear infinite }
+
+  @keyframes nodeGlow { 0%,100%{ box-shadow:0 0 0 1px rgba(56,189,248,.35), 0 0 22px -4px rgba(56,189,248,.5) } 50%{ box-shadow:0 0 0 1px rgba(56,189,248,.7), 0 0 34px 0 rgba(56,189,248,.65) } }
+  .node-active{ animation:nodeGlow 1.8s ease-in-out infinite }
+
+  .row-toggle .chev{ transition:transform .25s ease }
+  .row-open .chev{ transform:rotate(90deg) }
+
+  .navlink.active{ background:rgba(56,189,248,0.10); color:#e2f3ff }
+  .navlink.active .nav-ic{ color:#38bdf8 }
+  .navlink.active::before{ opacity:1 }
+  .navlink::before{ content:''; position:absolute; left:0; top:8px; bottom:8px; width:2px; border-radius:99px; background:#38bdf8; opacity:0; transition:opacity .2s }
+
+  .toast-in{ animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both }
+  @keyframes tickfade { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+  .tick-in{ animation:tickfade .4s ease both }
+
+  .kpi-card{ transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s, border-color .25s }
+  .kpi-card:hover{ transform:translateY(-3px); border-color:rgba(56,189,248,0.35); box-shadow:0 0 0 1px rgba(56,189,248,0.2), 0 18px 48px -20px rgba(56,189,248,0.35) }
+
+  .unit-card{ transition:transform .25s, border-color .25s, box-shadow .25s }
+  .unit-card:hover{ transform:translateY(-2px); box-shadow:0 18px 50px -22px rgba(0,0,0,.85) }
+
+  .data-row{ transition:background .15s }
+  .data-row:hover{ background:rgba(56,189,248,0.045) }
+
+  .map-dot{ transition:transform .2s, filter .2s }
+  .map-dot:hover{ transform:scale(1.35); filter:brightness(1.25) }
+
+  [data-view-section]{ display:none }
+  [data-view-section].active{ display:block }
+</style>
+</head>
+<body class="font-sans text-slate-300 antialiased selection:bg-brand-500/30">
+
+<!-- ===================== APP SHELL ===================== -->
+<div class="min-h-screen grid-bg flex">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed lg:static z-40 inset-y-0 left-0 w-[252px] -translate-x-full lg:translate-x-0 transition-transform duration-300 border-r border-white/5 bg-ink-900/95 glass flex flex-col">
+    <div class="h-16 flex items-center gap-2.5 px-5 border-b border-white/5">
+      <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-brand-400 to-indigo-500 grid place-items-center shadow-glow">
+        <i data-lucide="boxes" class="w-4.5 h-4.5 text-ink-950" style="width:18px;height:18px"></i>
+      </div>
+      <div class="leading-tight">
+        <p class="text-[15px] font-bold text-white tracking-tight">Procurly</p>
+        <p class="text-[10px] text-slate-500 font-medium tracking-wider uppercase">Supply Operations</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+      <p class="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-600">Operação</p>
+      <button data-nav="dashboard" class="navlink active relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="layout-dashboard" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Painel Executivo</span>
+      </button>
+      <button data-nav="followup" class="navlink relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="clipboard-list" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Follow-up de Compras</span>
+        <span class="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/20 shrink-0">187</span>
+      </button>
+      <button data-nav="units" class="navlink relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="network" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Monitoramento Multi-Unidade</span>
+      </button>
+      <button data-nav="automation" class="navlink relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="workflow" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Fluxo de Automação</span>
+      </button>
+      <button data-nav="suppliers" class="navlink relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="trophy" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Performance de Fornecedores</span>
+      </button>
+
+      <p class="px-3 pt-5 pb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-600">Almoxarifado</p>
+      <button data-nav="warehouse" class="navlink relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="package" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Controle de Almoxarifado</span>
+      </button>
+      <button data-nav="warehouseMap" class="navlink relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="map" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Mapa Operacional</span>
+      </button>
+      <button data-nav="inbound" class="navlink relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="truck" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Logística de Entrada</span>
+      </button>
+      <button data-nav="intel" class="navlink relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="brain-circuit" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Inteligência de Estoque</span>
+      </button>
+      <button data-nav="warroom" class="navlink relative w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors text-left">
+        <i data-lucide="radar" class="nav-ic w-4 h-4 text-slate-500 shrink-0"></i> <span>Sala de Operações</span>
+        <span class="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded bg-brand-500/15 text-brand-300 border border-brand-500/20 shrink-0">LIVE</span>
+      </button>
+
+      <p class="px-3 pt-5 pb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-600">Atalhos</p>
+      <div class="px-3 space-y-2">
+        <div class="rounded-lg border border-white/5 bg-ink-850 p-3">
+          <div class="flex items-center gap-2 text-amber-400 text-xs font-semibold">
+            <span class="h-1.5 w-1.5 rounded-full bg-amber-400 pulse-amber"></span> 3 unidades em risco
+          </div>
+          <p class="mt-1 text-[11px] text-slate-500 leading-relaxed">Ruptura prevista de estoque em Manaus, Recife e Betim.</p>
+        </div>
+      </div>
+    </nav>
+
+    <div class="border-t border-white/5 p-3">
+      <div class="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-white/5 transition-colors cursor-pointer">
+        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-brand-500 grid place-items-center text-xs font-bold text-white">JS</div>
+        <div class="leading-tight min-w-0">
+          <p class="text-xs font-semibold text-slate-200 truncate">Julio Silva</p>
+          <p class="text-[10px] text-slate-500 truncate">Diretor de Suprimentos</p>
+        </div>
+        <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-slate-600 ml-auto"></i>
+      </div>
+    </div>
+  </aside>
+
+  <div id="backdrop" class="fixed inset-0 bg-black/60 z-30 lg:hidden hidden"></div>
+
+  <!-- Main -->
+  <div class="flex-1 min-w-0 flex flex-col">
+
+    <!-- Header -->
+    <header class="h-16 sticky top-0 z-20 border-b border-white/5 glass flex items-center gap-4 px-4 lg:px-7">
+      <button id="menuBtn" class="lg:hidden text-slate-400 hover:text-white"><i data-lucide="menu" class="w-5 h-5"></i></button>
+
+      <div class="hidden sm:flex items-center gap-2 text-[13px]">
+        <span id="crumb" class="font-semibold text-slate-200">Painel Executivo</span>
+        <span class="text-slate-700">/</span>
+        <span class="text-slate-500">Grupo Atlântico Indústria</span>
+      </div>
+
+      <div class="ml-auto flex items-center gap-2.5">
+        <div class="relative hidden md:block">
+          <i data-lucide="search" class="w-4 h-4 text-slate-600 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input id="globalSearch" placeholder="Buscar PO, fornecedor, unidade…" class="w-72 bg-ink-850 border border-white/5 rounded-lg pl-9 pr-14 py-2 text-[13px] text-slate-300 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500/50 focus:border-brand-500/40 transition">
+          <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-600 border border-white/10 rounded px-1.5 py-0.5 font-mono">⌘K</kbd>
+        </div>
+
+        <div class="hidden xl:flex items-center gap-2 text-[11px] text-slate-500 px-3 py-1.5 rounded-lg border border-white/5 bg-ink-850">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+          ERP sincronizado · <span id="syncClock" class="font-mono text-slate-400">--:--:--</span>
+        </div>
+
+        <div class="relative">
+          <button id="bellBtn" class="relative h-9 w-9 grid place-items-center rounded-lg border border-white/5 bg-ink-850 text-slate-400 hover:text-white hover:border-white/15 transition">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute -top-1 -right-1 h-4 min-w-4 px-1 grid place-items-center text-[9px] font-bold rounded-full bg-red-500 text-white pulse-red">5</span>
+          </button>
+          <div id="bellMenu" class="hidden absolute right-0 mt-2 w-[360px] rounded-xl border border-white/10 bg-ink-850 shadow-card overflow-hidden z-50">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-white/5">
+              <p class="text-sm font-semibold text-slate-200">Central de Alertas</p>
+              <span class="text-[10px] text-brand-400 font-semibold cursor-pointer hover:underline">Marcar tudo como lido</span>
+            </div>
+            <div id="bellList" class="max-h-[360px] overflow-y-auto divide-y divide-white/5"></div>
+            <div class="px-4 py-2.5 text-center text-[11px] text-slate-500 border-t border-white/5 hover:text-slate-300 cursor-pointer">Ver histórico completo de eventos</div>
+          </div>
+        </div>
+
+        <button class="h-9 px-3.5 grid place-items-center rounded-lg bg-brand-500 hover:bg-brand-400 text-ink-950 text-[13px] font-semibold transition shadow-glow">
+          <span class="flex items-center gap-1.5"><i data-lucide="plus" class="w-4 h-4"></i> Nova PO</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content scroll area -->
+    <main id="main" class="flex-1 overflow-y-auto p-4 lg:p-7">
+
+      <!-- skeleton -->
+      <div id="skeleton" class="hidden">
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
+          <div class="h-28 rounded-xl skeleton"></div><div class="h-28 rounded-xl skeleton"></div>
+          <div class="h-28 rounded-xl skeleton"></div><div class="h-28 rounded-xl skeleton"></div>
+          <div class="h-28 rounded-xl skeleton"></div><div class="h-28 rounded-xl skeleton"></div>
+        </div>
+        <div class="grid lg:grid-cols-3 gap-4">
+          <div class="h-80 rounded-xl skeleton lg:col-span-2"></div>
+          <div class="h-80 rounded-xl skeleton"></div>
+        </div>
+      </div>
+
+      <!-- view sections -->
+      <section data-view-section="dashboard" class="active"></section>
+      <section data-view-section="followup"></section>
+      <section data-view-section="units"></section>
+      <section data-view-section="automation"></section>
+      <section data-view-section="suppliers"></section>
+      <section data-view-section="warehouse"></section>
+      <section data-view-section="warehouseMap"></section>
+      <section data-view-section="inbound"></section>
+      <section data-view-section="intel"></section>
+      <section data-view-section="warroom"></section>
+    </main>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div id="toastWrap" class="fixed bottom-5 right-5 z-[60] space-y-2.5 w-[340px]"></div>
+
+<script>
+/* ============================================================
+   DATA LAYER — deterministic pseudo-random for stable realism
+============================================================ */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const rnd = mulberry32(20260519);
+const pick = arr => arr[Math.floor(rnd()*arr.length)];
+const ri = (a,b)=> a+Math.floor(rnd()*(b-a+1));
+const BRL = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pad2 = n => String(n).padStart(2,'0');
+
+const SUPPLIERS = [
+  'Metalúrgica Andrade S.A.','Polimar Componentes Ltda','TecnoAço Brasil','Insumos Vale do Aço',
+  'Hidráulica Paulista Ltda','ElétroSul Distribuidora','Química Nordeste S.A.','Rolamentos Premium BR',
+  'LogPack Embalagens','Ferramentas Titan','Vedações Brasil Ltda','CabosCom Industrial'
+];
+const BUYERS = ['Camila Rezende','Bruno Tavares','Larissa Monteiro','Diego Albuquerque','Patrícia Lemos','Rafael Quadros','Aline Bastos','Thiago Nogueira'];
+const UNITS = [
+  {id:'GRU',name:'CD São Paulo',city:'Guarulhos · SP',x:62,y:70},
+  {id:'CPQ',name:'Planta Campinas',city:'Campinas · SP',x:58,y:67},
+  {id:'CAX',name:'CD Rio de Janeiro',city:'Duque de Caxias · RJ',x:67,y:71},
+  {id:'BTM',name:'Planta Betim',city:'Betim · MG',x:63,y:62},
+  {id:'CTG',name:'CD Belo Horizonte',city:'Contagem · MG',x:64,y:60},
+  {id:'SJP',name:'Planta Curitiba',city:'S. J. dos Pinhais · PR',x:56,y:78},
+  {id:'CAN',name:'CD Porto Alegre',city:'Canoas · RS',x:53,y:88},
+  {id:'JBT',name:'Planta Recife',city:'Jaboatão · PE',x:84,y:38},
+  {id:'SSF',name:'CD Salvador',city:'Simões Filho · BA',x:80,y:46},
+  {id:'MAO',name:'Planta Manaus',city:'Distrito Industrial · AM',x:38,y:24},
+];
+const MATERIALS = ['Chapa de aço SAE 1020','Rolamento 6204-ZZ','Resina PP injeção','Cabo flexível 2,5mm²','Vedação NBR 70','Solvente industrial','Embalagem corrugada','Parafuso sextavado M8','Tinta epóxi cinza','Óleo hidráulico ISO 68'];
+
+const STATUS = {
+  ontime:{label:'No prazo',cls:'bg-emerald-500/12 text-emerald-400 border-emerald-500/20',dot:'bg-emerald-400'},
+  attention:{label:'Atenção',cls:'bg-amber-500/12 text-amber-400 border-amber-500/20',dot:'bg-amber-400'},
+  delayed:{label:'Atrasado',cls:'bg-red-500/12 text-red-400 border-red-500/20',dot:'bg-red-400'},
+  approval:{label:'Em aprovação',cls:'bg-indigo-500/12 text-indigo-300 border-indigo-500/20',dot:'bg-indigo-400'},
+};
+const RISK = {
+  Baixo:'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  Médio:'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  Alto:'bg-orange-500/12 text-orange-400 border-orange-500/20',
+  Crítico:'bg-red-500/15 text-red-300 border-red-500/25',
+};
+const NF = {Emitida:'text-emerald-400',Pendente:'text-amber-400','Não emitida':'text-slate-500','Em conferência':'text-brand-400'};
+
+function dateStr(offset){
+  const d=new Date(2026,4,19); d.setDate(d.getDate()+offset);
+  return pad2(d.getDate())+'/'+pad2(d.getMonth()+1)+'/'+d.getFullYear();
+}
+function relTime(h){
+  if(h<1) return 'há '+Math.max(2,Math.floor(h*60))+' min';
+  if(h<24) return 'há '+Math.floor(h)+'h';
+  return 'há '+Math.floor(h/24)+'d';
+}
+
+// Build PO dataset
+const POS = [];
+for(let i=0;i<32;i++){
+  const r = rnd();
+  let st;
+  if(r<0.46) st='ontime'; else if(r<0.70) st='attention'; else if(r<0.90) st='delayed'; else st='approval';
+  const due = st==='delayed'? ri(-9,-1) : st==='attention'? ri(0,3) : ri(2,21);
+  const riskLvl = st==='delayed'? pick(['Alto','Crítico','Crítico']) : st==='attention'? pick(['Médio','Alto']) : st==='approval'? 'Médio' : pick(['Baixo','Baixo','Médio']);
+  const sup = pick(SUPPLIERS);
+  const unit = pick(UNITS);
+  POS.push({
+    po:'PO-2026-'+ (4800+i*7),
+    supplier:sup,
+    buyer:pick(BUYERS),
+    due, dueStr:dateStr(due),
+    status:st,
+    lastTouchH: st==='delayed'? rnd()*60+8 : rnd()*40,
+    risk:riskLvl,
+    unit,
+    value: ri(8,260)*1000 + ri(0,99)*10,
+    nf: st==='delayed'? pick(['Pendente','Não emitida','Não emitida']) : st==='approval'? 'Não emitida' : pick(['Emitida','Emitida','Em conferência','Pendente']),
+    items: ri(2,9),
+    material: pick(MATERIALS),
+  });
+}
+const totals = {
+  open: 1284, delayed: 187, sla: 4.2, slaTarget: 3.5, approvals: 42, critical: 3, ontimeRate: 84.3
+};
+
+// Supplier performance metrics
+const SUP_PERF = SUPPLIERS.map((s,i)=>{
+  const sla = +(70+rnd()*28).toFixed(1);
+  const acc = +(74+rnd()*24).toFixed(1);
+  const delay = +(0.4+rnd()*6).toFixed(1);
+  const resp = +(1+rnd()*22).toFixed(1);
+  const trend = Array.from({length:10},()=>+(60+rnd()*38).toFixed(1));
+  let score = Math.round(sla*0.4 + acc*0.35 + (100-delay*9)*0.15 + (100-resp*3)*0.10);
+  score = Math.max(38,Math.min(98,score));
+  return {name:s, sla, acc, delay, resp, trend, score, orders: ri(40,420)};
+}).sort((a,b)=>b.score-a.score);
+
+// Units monitoring
+const UNIT_MON = UNITS.map((u,i)=>{
+  const risk = i<2? ri(74,93) : i<4? ri(48,70) : ri(8,46);
+  const health = Math.max(22, 100-risk-ri(0,9));
+  const sev = risk>=72?'Crítico': risk>=48?'Atenção':'Normal';
+  return {...u,
+    risk, health, sev,
+    critAlerts: risk>=72? ri(4,9): risk>=48? ri(1,4): ri(0,1),
+    delayedMat: risk>=72? ri(5,13): risk>=48? ri(2,6): ri(0,3),
+    rupture: risk>=72? dateStr(ri(2,6)) : risk>=48? dateStr(ri(7,16)) : '—',
+    topMat: pick(MATERIALS),
+  };
+}).sort((a,b)=>b.risk-a.risk);
+
+const NOTIFS = [
+  {ic:'alert-octagon',c:'red',t:'Ruptura de estoque prevista — Manaus',d:'Resina PP injeção zera em 3 dias úteis. PO-2026-4863 atrasada.',time:relTime(0.4)},
+  {ic:'truck',c:'amber',t:'Entrega atrasada — Metalúrgica Andrade',d:'PO-2026-4807 com 6 dias de atraso. Sem retorno do fornecedor.',time:relTime(2)},
+  {ic:'shield-alert',c:'red',t:'Escalada automática acionada',d:'PO-2026-4828 escalada para gerência após 48h sem resposta.',time:relTime(5)},
+  {ic:'check-circle-2',c:'emerald',t:'SLA recuperado — ElétroSul',d:'Fornecedor confirmou novo aceite. Risco reduzido para Médio.',time:relTime(9)},
+  {ic:'file-clock',c:'brand',t:'42 aprovações pendentes',d:'Aprovações acima de R$ 50k aguardando alçada da diretoria.',time:relTime(22)},
+];
+
+/* safe icon (re)render — resilient if the Lucide CDN is slow/not ready on first load */
+function icons(){ try{ if(window.lucide && typeof lucide.createIcons==='function'){ lucide.createIcons() } }catch(e){} }
+window.addEventListener('load', icons);
+
+/* ============================================================
+   SVG CHART HELPERS
+============================================================ */
+function areaChart(series, opt={}){
+  const w=opt.w||640,h=opt.h||230,pl=38,pr=14,pt=18,pb=28;
+  const max=opt.max|| Math.max(...series)*1.12, min=opt.min||0;
+  const iw=w-pl-pr, ih=h-pt-pb;
+  const xs=i=>pl+ (i/(series.length-1))*iw;
+  const ys=v=>pt+ ih-((v-min)/(max-min))*ih;
+  let line=series.map((v,i)=>(i?'L':'M')+xs(i).toFixed(1)+' '+ys(v).toFixed(1)).join(' ');
+  let area=line+` L${xs(series.length-1).toFixed(1)} ${pt+ih} L${pl} ${pt+ih} Z`;
+  let grid='';
+  for(let g=0;g<=4;g++){const y=pt+ (g/4)*ih; const val=Math.round(max-(g/4)*(max-min));
+    grid+=`<line x1="${pl}" y1="${y}" x2="${w-pr}" y2="${y}" stroke="rgba(255,255,255,.05)"/><text x="${pl-8}" y="${y+3}" text-anchor="end" fill="#475569" font-size="9" font-family="JetBrains Mono">${val}${opt.suffix||''}</text>`;}
+  let labs='';
+  (opt.labels||[]).forEach((l,i)=>{ labs+=`<text x="${xs(i)}" y="${h-8}" text-anchor="middle" fill="#475569" font-size="9">${l}</text>`; });
+  let dots=series.map((v,i)=> i%2? '':`<circle cx="${xs(i).toFixed(1)}" cy="${ys(v).toFixed(1)}" r="2.5" fill="#0b0f17" stroke="#38bdf8" stroke-width="1.5"/>`).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-full" preserveAspectRatio="none">
+    <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity=".35"/><stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${grid}<path d="${area}" fill="url(#ag)"/><path d="${line}" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>${dots}${labs}
+  </svg>`;
+}
+function barChart(data, opt={}){ // data: [{label,value,color}]
+  const w=opt.w||640,h=opt.h||230,pl=34,pr=12,pt=14,pb=30;
+  const max=Math.max(...data.map(d=>d.value))*1.15;
+  const iw=w-pl-pr, ih=h-pt-pb, bw=iw/data.length*0.52;
+  let grid='';
+  for(let g=0;g<=4;g++){const y=pt+(g/4)*ih;grid+=`<line x1="${pl}" y1="${y}" x2="${w-pr}" y2="${y}" stroke="rgba(255,255,255,.05)"/><text x="${pl-7}" y="${y+3}" text-anchor="end" fill="#475569" font-size="9" font-family="JetBrains Mono">${Math.round(max-(g/4)*max)}</text>`;}
+  let bars=data.map((d,i)=>{const cx=pl+(i+0.5)/data.length*iw;const bh=(d.value/max)*ih;const y=pt+ih-bh;
+    return `<rect x="${(cx-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${d.color||'#38bdf8'}"><animate attributeName="height" from="0" to="${bh.toFixed(1)}" dur=".7s" fill="freeze"/><animate attributeName="y" from="${pt+ih}" to="${y.toFixed(1)}" dur=".7s" fill="freeze"/></rect>
+    <text x="${cx}" y="${h-9}" text-anchor="middle" fill="#64748b" font-size="9">${d.label}</text>`;}).join('');
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-full">${grid}${bars}</svg>`;
+}
+function donut(parts, opt={}){ // parts:[{label,value,color}]
+  const sz=opt.sz||170, r=68, cx=sz/2, cy=sz/2, C=2*Math.PI*r;
+  const tot=parts.reduce((a,p)=>a+p.value,0); let off=0;
+  let segs=parts.map(p=>{const frac=p.value/tot;const dash=`${(frac*C).toFixed(2)} ${(C-frac*C).toFixed(2)}`;
+    const s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${p.color}" stroke-width="16" stroke-dasharray="${dash}" stroke-dashoffset="${(-off*C).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"/>`;
+    off+=frac;return s;}).join('');
+  return `<svg viewBox="0 0 ${sz} ${sz}" class="w-[170px] h-[170px]">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="16"/>${segs}
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#fff" font-size="22" font-weight="700">${tot}</text>
+    <text x="${cx}" y="${cy+14}" text-anchor="middle" fill="#64748b" font-size="9.5">${opt.center||'TOTAL'}</text></svg>`;
+}
+function spark(arr,color='#38bdf8'){
+  const w=110,h=30,max=Math.max(...arr),min=Math.min(...arr);
+  const pts=arr.map((v,i)=>`${(i/(arr.length-1)*w).toFixed(1)},${(h-((v-min)/((max-min)||1))*h).toFixed(1)}`).join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" class="w-[88px] h-[28px]"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function ring(score){
+  const r=22,C=2*Math.PI*r, c = score>=70?'#34d399': score>=45?'#fbbf24':'#f87171';
+  return `<svg viewBox="0 0 56 56" class="w-14 h-14"><circle cx="28" cy="28" r="${r}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="5"/>
+  <circle cx="28" cy="28" r="${r}" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${(C-(score/100)*C).toFixed(1)}" transform="rotate(-90 28 28)"/>
+  <text x="28" y="32" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="700">${score}</text></svg>`;
+}
+
+/* ============================================================
+   COMPONENTS
+============================================================ */
+function kpi(o){
+  return `<div class="kpi-card rounded-xl border border-white/5 bg-ink-850 p-4 shadow-card">
+    <div class="flex items-start justify-between">
+      <div class="h-9 w-9 rounded-lg grid place-items-center ${o.iconBg}"><i data-lucide="${o.icon}" class="w-4.5 h-4.5 ${o.iconC}" style="width:18px;height:18px"></i></div>
+      <span class="text-[11px] font-semibold flex items-center gap-1 ${o.trendC}"><i data-lucide="${o.trendIc}" class="w-3 h-3"></i>${o.trend}</span>
+    </div>
+    <p class="mt-3 text-2xl font-bold text-white tracking-tight">${o.value}</p>
+    <p class="text-[11px] text-slate-500 mt-0.5">${o.label}</p>
+  </div>`;
+}
+function badge(stKey){const s=STATUS[stKey];return `<span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-1 rounded-md border ${s.cls}"><span class="h-1.5 w-1.5 rounded-full ${s.dot}"></span>${s.label}</span>`;}
+function panel(title,sub,body,extra=''){
+  return `<div class="rounded-xl border border-white/5 bg-ink-850 shadow-card overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
+      <div><p class="text-sm font-semibold text-slate-100">${title}</p>${sub?`<p class="text-[11px] text-slate-500 mt-0.5">${sub}</p>`:''}</div>
+      ${extra}
+    </div>${body}</div>`;
+}
+
+/* ============================================================
+   VIEW: EXECUTIVE DASHBOARD
+============================================================ */
+function viewDashboard(){
+  const kpis = [
+    {icon:'package',iconBg:'bg-brand-500/12',iconC:'text-brand-400',trend:'+6,2%',trendC:'text-emerald-400',trendIc:'trending-up',value:'1.284',label:'POs em andamento'},
+    {icon:'alarm-clock',iconBg:'bg-red-500/12',iconC:'text-red-400',trend:'+12,4%',trendC:'text-red-400',trendIc:'trending-up',value:'187',label:'POs atrasadas (14,6%)'},
+    {icon:'gauge',iconBg:'bg-amber-500/12',iconC:'text-amber-400',trend:'+0,7d',trendC:'text-red-400',trendIc:'trending-up',value:'4,2 dias',label:'SLA médio (meta 3,5d)'},
+    {icon:'check-check',iconBg:'bg-emerald-500/12',iconC:'text-emerald-400',trend:'-2,1%',trendC:'text-red-400',trendIc:'trending-down',value:'84,3%',label:'Entregas no prazo'},
+    {icon:'file-clock',iconBg:'bg-indigo-500/12',iconC:'text-indigo-300',trend:'+9',trendC:'text-amber-400',trendIc:'trending-up',value:'42',label:'Aprovações pendentes'},
+    {icon:'siren',iconBg:'bg-orange-500/12',iconC:'text-orange-400',trend:'estável',trendC:'text-slate-500',trendIc:'minus',value:'3',label:'Unidades críticas'},
+  ];
+  const perf=[78,81,79,83,80,77,74,76,82,85,84,84.3];
+  const labs=['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','S11','S12'];
+
+  const topDelay = SUP_PERF.slice().sort((a,b)=>b.delay-a.delay).slice(0,5);
+  const maxDel=Math.max(...topDelay.map(s=>s.delay));
+  const delayBars = topDelay.map(s=>`
+    <div class="space-y-1.5">
+      <div class="flex justify-between text-[11px]"><span class="text-slate-300 font-medium">${s.name}</span><span class="font-mono text-red-400">${s.delay.toFixed(1)}d</span></div>
+      <div class="h-1.5 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-orange-500 to-red-500" style="width:${(s.delay/maxDel*100).toFixed(0)}%"></div></div>
+    </div>`).join('');
+
+  const dParts=[
+    {label:'No prazo',value:712,color:'#34d399'},
+    {label:'Atenção',value:268,color:'#fbbf24'},
+    {label:'Atrasado',value:187,color:'#f87171'},
+    {label:'Aprovação',value:117,color:'#818cf8'},
+  ];
+  const legend=dParts.map(p=>`<div class="flex items-center justify-between text-[11px] py-1.5"><span class="flex items-center gap-2 text-slate-400"><span class="h-2 w-2 rounded-sm" style="background:${p.color}"></span>${p.label}</span><span class="font-mono text-slate-300">${p.value}</span></div>`).join('');
+
+  const delayedFeed = POS.filter(p=>p.status==='delayed').slice(0,6).map(p=>`
+    <div class="flex gap-3 p-3 hover:bg-white/[.03] transition rounded-lg">
+      <div class="mt-0.5"><span class="h-2 w-2 rounded-full bg-red-400 block pulse-red"></span></div>
+      <div class="min-w-0 flex-1">
+        <p class="text-[12px] text-slate-200 font-medium truncate">${p.po} · ${p.supplier}</p>
+        <p class="text-[11px] text-slate-500 truncate">${p.material} · destino ${p.unit.name}</p>
+        <div class="flex items-center gap-3 mt-1 text-[10px]">
+          <span class="text-red-400 font-semibold">${Math.abs(p.due)} dias de atraso</span>
+          <span class="text-slate-600">·</span>
+          <span class="text-slate-500">prazo ${p.dueStr}</span>
+        </div>
+      </div>
+      <span class="text-[10px] text-slate-600 whitespace-nowrap">${relTime(p.lastTouchH)}</span>
+    </div>`).join('');
+
+  return `
+  <div class="fade-up">
+    <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight">Painel Executivo de Suprimentos</h1>
+        <p class="text-[13px] text-slate-500 mt-1">Visão consolidada · 10 unidades · ciclo de compras 2026 · janela últimas 12 semanas</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="text-[12px] text-slate-400 border border-white/5 bg-ink-850 hover:border-white/15 rounded-lg px-3 py-2 flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Trimestre atual</button>
+        <button class="text-[12px] text-slate-400 border border-white/5 bg-ink-850 hover:border-white/15 rounded-lg px-3 py-2 flex items-center gap-1.5"><i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-5 stagger">${kpis.map(kpi).join('')}</div>
+
+    <div class="grid lg:grid-cols-3 gap-4 mb-5">
+      ${panel('Desempenho de Suprimentos','% de entregas no prazo — evolução semanal',
+        `<div class="p-5 h-[260px]">${areaChart(perf,{labels:labs,max:100,suffix:'%'})}</div>`,
+        `<div class="flex items-center gap-4 text-[11px]"><span class="flex items-center gap-1.5 text-slate-400"><span class="h-1.5 w-4 rounded bg-brand-400"></span>No prazo</span><span class="text-emerald-400 font-semibold">▲ tendência de recuperação</span></div>`
+      ).replace('rounded-xl','rounded-xl lg:col-span-2')}
+      ${panel('Distribuição de POs','1.284 ordens ativas',
+        `<div class="p-5 flex flex-col items-center"><div class="flex justify-center">${donut(dParts,{center:'POs ATIVAS'})}</div><div class="w-full mt-3 divide-y divide-white/5">${legend}</div></div>`)}
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4">
+      ${panel('Fornecedores com maior taxa de atraso','Top 5 · média de atraso em dias úteis',
+        `<div class="p-5 space-y-4">${delayBars}</div>`).replace('rounded-xl','rounded-xl')}
+      ${panel('Linha do tempo de entregas atrasadas','Eventos críticos em aberto',
+        `<div class="p-2">${delayedFeed}</div>`,
+        `<span class="text-[11px] text-red-400 font-semibold">${POS.filter(p=>p.status==='delayed').length} em aberto</span>`).replace('rounded-xl','rounded-xl lg:col-span-2')}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   VIEW: PROCUREMENT FOLLOW-UP CENTER
+============================================================ */
+let foFilter='all', foSearch='';
+function timelineFor(p){
+  const ev=[
+    {t:'PO emitida e enviada ao fornecedor',a:'Sistema',ic:'file-plus',c:'brand',h:p.lastTouchH+120},
+    {t:'Fornecedor confirmou recebimento do pedido',a:p.supplier,ic:'mail-check',c:'emerald',h:p.lastTouchH+96},
+    {t:'Follow-up automático enviado (D-5)',a:'Automação',ic:'bot',c:'brand',h:p.lastTouchH+48},
+  ];
+  if(p.status==='delayed'){
+    ev.push({t:'Atraso detectado — sem aceite de embarque',a:'Motor de risco',ic:'alert-triangle',c:'red',h:p.lastTouchH+12});
+    ev.push({t:'Comprador '+p.buyer+' acionou cobrança formal',a:p.buyer,ic:'phone-call',c:'amber',h:p.lastTouchH+4});
+    ev.push({t:'Escalada para gerência de suprimentos',a:'Automação',ic:'shield-alert',c:'red',h:p.lastTouchH});
+  } else if(p.status==='attention'){
+    ev.push({t:'Risco elevado — prazo de embarque apertado',a:'Motor de risco',ic:'alert-triangle',c:'amber',h:p.lastTouchH+6});
+    ev.push({t:'Comprador solicitou previsão atualizada',a:p.buyer,ic:'message-square',c:'brand',h:p.lastTouchH});
+  } else if(p.status==='approval'){
+    ev.push({t:'Aguardando alçada — valor acima de R$ 50k',a:'Workflow de aprovação',ic:'file-clock',c:'indigo',h:p.lastTouchH});
+  } else {
+    ev.push({t:'Fornecedor confirmou data de embarque',a:p.supplier,ic:'truck',c:'emerald',h:p.lastTouchH});
+  }
+  const C={brand:'text-brand-400 bg-brand-500/12',emerald:'text-emerald-400 bg-emerald-500/12',amber:'text-amber-400 bg-amber-500/12',red:'text-red-400 bg-red-500/12',indigo:'text-indigo-300 bg-indigo-500/12'};
+  return ev.map((e,i)=>`
+    <div class="flex gap-3 ${i<ev.length-1?'pb-4':''} relative">
+      ${i<ev.length-1?'<span class="absolute left-[15px] top-8 bottom-0 w-px bg-white/8"></span>':''}
+      <div class="h-8 w-8 rounded-full grid place-items-center ${C[e.c]} shrink-0 z-10"><i data-lucide="${e.ic}" class="w-3.5 h-3.5"></i></div>
+      <div class="min-w-0 flex-1 pt-1">
+        <p class="text-[12px] text-slate-200">${e.t}</p>
+        <p class="text-[10px] text-slate-500 mt-0.5">${e.a} · ${relTime(e.h)}</p>
+      </div>
+    </div>`).join('');
+}
+function renderFollowRows(){
+  let rows=POS.filter(p=>{
+    if(foFilter!=='all' && p.status!==foFilter) return false;
+    if(foSearch){const q=foSearch.toLowerCase();return (p.po+p.supplier+p.buyer+p.unit.name+p.material).toLowerCase().includes(q);}
+    return true;
+  });
+  if(!rows.length) return `<tr><td colspan="9" class="text-center py-12 text-slate-600 text-sm">Nenhuma ordem encontrada para os filtros aplicados.</td></tr>`;
+  return rows.map((p,idx)=>{
+    const id='r'+idx;
+    return `
+    <tr class="data-row row-toggle border-b border-white/5 cursor-pointer" data-row="${id}">
+      <td class="px-4 py-3"><div class="flex items-center gap-2"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5 text-slate-600"></i><span class="font-mono text-[12px] text-brand-300">${p.po}</span></div></td>
+      <td class="px-4 py-3"><p class="text-[12px] text-slate-200 font-medium">${p.supplier}</p><p class="text-[10px] text-slate-600">${p.items} itens · ${p.material}</p></td>
+      <td class="px-4 py-3"><span class="text-[12px] text-slate-400">${p.buyer}</span></td>
+      <td class="px-4 py-3"><span class="text-[12px] ${p.status==='delayed'?'text-red-400 font-semibold':'text-slate-300'} font-mono">${p.dueStr}</span></td>
+      <td class="px-4 py-3">${badge(p.status)}</td>
+      <td class="px-4 py-3"><span class="text-[11px] text-slate-500">${relTime(p.lastTouchH)}</span></td>
+      <td class="px-4 py-3"><span class="text-[10px] font-medium px-2 py-1 rounded border ${RISK[p.risk]}">${p.risk}</span></td>
+      <td class="px-4 py-3"><span class="text-[11px] text-slate-400">${p.unit.name}</span><p class="text-[10px] text-slate-600">${p.unit.city}</p></td>
+      <td class="px-4 py-3"><span class="text-[11px] font-medium ${NF[p.nf]}">${p.nf}</span></td>
+    </tr>
+    <tr class="hidden bg-ink-900/60" data-detail="${id}">
+      <td colspan="9" class="px-0 py-0">
+        <div class="px-6 py-5 grid lg:grid-cols-3 gap-6 border-b border-white/5">
+          <div class="lg:col-span-2">
+            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-4">Linha do tempo de interações</p>
+            ${timelineFor(p)}
+          </div>
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-3">Resumo da ordem</p>
+            <div class="space-y-2.5 text-[12px]">
+              <div class="flex justify-between"><span class="text-slate-500">Valor total</span><span class="text-slate-200 font-mono">${BRL(p.value)}</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Destino</span><span class="text-slate-300">${p.unit.city}</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Risco de atraso</span><span class="${p.risk==='Crítico'?'text-red-400':'text-slate-300'}">${p.risk}</span></div>
+              <div class="flex justify-between"><span class="text-slate-500">Status NF-e</span><span class="${NF[p.nf]}">${p.nf}</span></div>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-5">
+              <button data-act="Cobrança enviada ao fornecedor" class="actbtn flex-1 text-[11px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/25 hover:bg-amber-500/25 rounded-lg px-3 py-2 flex items-center justify-center gap-1.5"><i data-lucide="phone-call" class="w-3.5 h-3.5"></i> Cobrar</button>
+              <button data-act="Linha do tempo aberta" class="actbtn flex-1 text-[11px] font-semibold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 rounded-lg px-3 py-2 flex items-center justify-center gap-1.5"><i data-lucide="history" class="w-3.5 h-3.5"></i> Timeline</button>
+              <button data-act="Ordem escalada para a gerência" class="actbtn flex-1 text-[11px] font-semibold bg-red-500/15 text-red-300 border border-red-500/25 hover:bg-red-500/25 rounded-lg px-3 py-2 flex items-center justify-center gap-1.5"><i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Escalar</button>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function viewFollowup(){
+  const counts={all:POS.length,ontime:POS.filter(p=>p.status==='ontime').length,attention:POS.filter(p=>p.status==='attention').length,delayed:POS.filter(p=>p.status==='delayed').length,approval:POS.filter(p=>p.status==='approval').length};
+  const chip=(k,l)=>`<button data-fo="${k}" class="fochip text-[12px] font-medium px-3 py-1.5 rounded-lg border transition ${foFilter===k?'bg-brand-500/15 text-brand-300 border-brand-500/30':'bg-ink-850 text-slate-400 border-white/5 hover:border-white/15'}">${l} <span class="text-slate-600 font-mono">${counts[k]}</span></button>`;
+  return `
+  <div class="fade-up">
+    <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight">Centro de Follow-up de Compras</h1>
+        <p class="text-[13px] text-slate-500 mt-1">Acompanhamento operacional de ordens · cobrança ativa de fornecedores · escalonamento</p>
+      </div>
+      <div class="flex items-center gap-2 text-[11px] text-slate-500">
+        <span class="flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>Tempo real</span>
+        <span>·</span><span>Atualizado <span id="foClock" class="font-mono">agora</span></span>
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-white/5 bg-ink-850 shadow-card overflow-hidden">
+      <div class="flex flex-wrap items-center gap-3 px-4 py-3.5 border-b border-white/5">
+        <div class="relative flex-1 min-w-[220px]">
+          <i data-lucide="search" class="w-4 h-4 text-slate-600 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input id="foSearch" value="${foSearch}" placeholder="Buscar por PO, fornecedor, comprador, unidade ou material…" class="w-full bg-ink-900 border border-white/5 rounded-lg pl-9 pr-3 py-2 text-[12px] text-slate-300 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500/40">
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          ${chip('all','Todas')}${chip('delayed','Atrasadas')}${chip('attention','Atenção')}${chip('ontime','No prazo')}${chip('approval','Aprovação')}
+        </div>
+        <button class="text-[12px] text-slate-400 border border-white/5 bg-ink-900 hover:border-white/15 rounded-lg px-3 py-2 flex items-center gap-1.5"><i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i> Filtros</button>
+      </div>
+      <div class="overflow-x-auto max-h-[calc(100vh-300px)] overflow-y-auto">
+        <table class="w-full text-left min-w-[1080px]">
+          <thead class="sticky top-0 z-10 bg-ink-800/95 glass">
+            <tr class="text-[10px] uppercase tracking-wider text-slate-500">
+              <th class="px-4 py-3 font-semibold">PO</th><th class="px-4 py-3 font-semibold">Fornecedor</th>
+              <th class="px-4 py-3 font-semibold">Comprador</th><th class="px-4 py-3 font-semibold">Entrega prevista</th>
+              <th class="px-4 py-3 font-semibold">Status</th><th class="px-4 py-3 font-semibold">Última interação</th>
+              <th class="px-4 py-3 font-semibold">Risco</th><th class="px-4 py-3 font-semibold">Unidade destino</th>
+              <th class="px-4 py-3 font-semibold">NF-e</th>
+            </tr>
+          </thead>
+          <tbody id="foBody">${renderFollowRows()}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   VIEW: MULTI-UNIT MONITORING
+============================================================ */
+function viewUnits(){
+  const sevCls={'Crítico':'text-red-400 bg-red-500/12 border-red-500/25','Atenção':'text-amber-400 bg-amber-500/12 border-amber-500/25','Normal':'text-emerald-400 bg-emerald-500/12 border-emerald-500/25'};
+  const dotCol=s=> s>=72?'#f87171':s>=48?'#fbbf24':'#34d399';
+  const mapDots = UNIT_MON.map(u=>`
+    <g class="map-dot" style="cursor:pointer">
+      <circle cx="${u.x}%" cy="${u.y}%" r="${u.sev==='Crítico'?7:5}" fill="${dotCol(u.risk)}" opacity=".22"/>
+      <circle cx="${u.x}%" cy="${u.y}%" r="3.5" fill="${dotCol(u.risk)}"/>
+      <text x="${u.x}%" y="${u.y-3}%" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="Inter">${u.id}</text>
+    </g>`).join('');
+
+  const cards = UNIT_MON.map(u=>`
+    <div class="unit-card rounded-xl border ${u.sev==='Crítico'?'border-red-500/25':'border-white/5'} bg-ink-850 shadow-card p-4">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-lg bg-ink-800 grid place-items-center"><i data-lucide="warehouse" class="w-4 h-4 text-slate-400"></i></div>
+          <div><p class="text-[13px] font-semibold text-slate-100">${u.name}</p><p class="text-[10px] text-slate-500">${u.city}</p></div>
+        </div>
+        ${ring(u.health)}
+      </div>
+      <div class="mt-3 flex items-center justify-between">
+        <span class="text-[10px] font-semibold px-2 py-1 rounded border ${sevCls[u.sev]}">${u.sev}</span>
+        <div class="flex items-center gap-1.5 text-[10px] text-slate-500">Risco operacional <span class="font-mono ${u.risk>=72?'text-red-400':u.risk>=48?'text-amber-400':'text-emerald-400'}">${u.risk}</span></div>
+      </div>
+      <div class="mt-3 h-1.5 rounded-full bg-white/5 overflow-hidden">
+        <div class="h-full rounded-full" style="width:${u.risk}%;background:linear-gradient(90deg,#fbbf24,${dotCol(u.risk)})"></div>
+      </div>
+      <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+        <div class="rounded-lg bg-ink-900 py-2"><p class="text-[15px] font-bold ${u.critAlerts>0?'text-red-400':'text-slate-300'}">${u.critAlerts}</p><p class="text-[9px] text-slate-600 uppercase tracking-wide">Alertas críticos</p></div>
+        <div class="rounded-lg bg-ink-900 py-2"><p class="text-[15px] font-bold ${u.delayedMat>0?'text-amber-400':'text-slate-300'}">${u.delayedMat}</p><p class="text-[9px] text-slate-600 uppercase tracking-wide">Mat. atrasados</p></div>
+        <div class="rounded-lg bg-ink-900 py-2"><p class="text-[12px] font-bold font-mono ${u.rupture==='—'?'text-slate-500':'text-red-400'}">${u.rupture}</p><p class="text-[9px] text-slate-600 uppercase tracking-wide">Ruptura prev.</p></div>
+      </div>
+      ${u.sev!=='Normal'?`<p class="mt-3 text-[11px] text-slate-500 flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-3 h-3 text-amber-400"></i> Impacto: <span class="text-slate-300">${u.topMat}</span></p>`:''}
+    </div>`).join('');
+
+  const crit=UNIT_MON.filter(u=>u.sev==='Crítico').length, att=UNIT_MON.filter(u=>u.sev==='Atenção').length;
+  return `
+  <div class="fade-up">
+    <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight">Monitoramento Multi-Unidade</h1>
+        <p class="text-[13px] text-slate-500 mt-1">10 unidades operacionais · risco de ruptura · materiais críticos impactando operação</p>
+      </div>
+      <div class="flex items-center gap-2 text-[12px]">
+        <span class="px-3 py-1.5 rounded-lg border border-red-500/25 bg-red-500/10 text-red-400 font-medium">${crit} crítica(s)</span>
+        <span class="px-3 py-1.5 rounded-lg border border-amber-500/25 bg-amber-500/10 text-amber-400 font-medium">${att} em atenção</span>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4 mb-5">
+      ${panel('Mapa operacional — Brasil','Severidade por unidade · clusters de risco em tempo real',
+        `<div class="relative p-5 h-[330px] bg-[radial-gradient(circle_at_60%_40%,rgba(56,189,248,0.06),transparent_60%)]">
+          <svg viewBox="0 0 100 100" class="w-full h-full" preserveAspectRatio="xMidYMid meet">
+            <g stroke="rgba(56,189,248,.10)" stroke-width="0.3">
+              ${UNIT_MON.slice(0,6).map((u,i)=> i? `<line x1="${UNIT_MON[0].x}%" y1="${UNIT_MON[0].y}%" x2="${u.x}%" y2="${u.y}%"/>`:'').join('')}
+            </g>
+            ${mapDots}
+          </svg>
+          <div class="absolute bottom-4 left-5 flex items-center gap-4 text-[10px] text-slate-500">
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#f87171"></span>Crítico</span>
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#fbbf24"></span>Atenção</span>
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#34d399"></span>Normal</span>
+          </div>
+        </div>`).replace('rounded-xl','rounded-xl lg:col-span-2')}
+      ${panel('Severidade consolidada','Distribuição da malha',
+        `<div class="p-5 space-y-3">
+          ${[['Crítico',crit,'#f87171'],['Atenção',att,'#fbbf24'],['Normal',10-crit-att,'#34d399']].map(([l,v,c])=>`
+            <div><div class="flex justify-between text-[12px] mb-1.5"><span class="text-slate-300">${l}</span><span class="font-mono text-slate-400">${v}/10</span></div>
+            <div class="h-2 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full" style="width:${v*10}%;background:${c}"></div></div></div>`).join('')}
+          <div class="pt-3 mt-3 border-t border-white/5 space-y-2 text-[11px]">
+            <div class="flex justify-between"><span class="text-slate-500">Score médio de risco</span><span class="font-mono text-amber-400">${Math.round(UNIT_MON.reduce((a,u)=>a+u.risk,0)/10)}</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Rupturas previstas (7d)</span><span class="font-mono text-red-400">${UNIT_MON.filter(u=>u.rupture!=='—').length}</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Materiais impactados</span><span class="font-mono text-slate-300">${UNIT_MON.reduce((a,u)=>a+u.delayedMat,0)}</span></div>
+          </div>
+        </div>`)}
+    </div>
+
+    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 stagger">${cards}</div>
+  </div>`;
+}
+
+/* ============================================================
+   VIEW: AUTOMATION FLOW
+============================================================ */
+const FLOW=[
+  {ic:'file-plus',t:'PO Criada',d:'Ordem gerada no ERP'},
+  {ic:'send',t:'Fornecedor Notificado',d:'E-mail + portal'},
+  {ic:'bot',t:'Follow-up Automático',d:'Régua D-7 / D-3 / D-1'},
+  {ic:'alert-triangle',t:'Atraso Detectado',d:'Motor de risco'},
+  {ic:'bell-ring',t:'Comprador Alertado',d:'Notificação prioritária'},
+  {ic:'shield-alert',t:'Escalada Gerencial',d:'SLA > 48h sem retorno'},
+  {ic:'database',t:'ERP Atualizado',d:'Status sincronizado'},
+];
+let logTimer=null;
+function logLine(){
+  const acts=[
+    ['brand','bot',`Follow-up automático enviado para ${pick(SUPPLIERS)} — ${pick(['PO-2026-4830','PO-2026-4807','PO-2026-4863','PO-2026-4891'])}`],
+    ['amber','alert-triangle',`Atraso detectado em ${pick(['PO-2026-4807','PO-2026-4828','PO-2026-4849'])} — risco elevado para Alto`],
+    ['emerald','check-circle-2',`${pick(SUPPLIERS)} confirmou novo aceite de embarque`],
+    ['red','shield-alert',`Escalada gerencial acionada — ${pick(['PO-2026-4828','PO-2026-4863'])} sem retorno há 52h`],
+    ['brand','database',`ERP sincronizado — ${ri(3,18)} ordens atualizadas`],
+    ['indigo','bell-ring',`Comprador ${pick(BUYERS)} notificado sobre risco em ${pick(UNITS).name}`],
+  ];
+  const [c,ic,txt]=pick(acts);
+  const C={brand:'text-brand-400',amber:'text-amber-400',emerald:'text-emerald-400',red:'text-red-400',indigo:'text-indigo-300'};
+  const now=new Date();
+  return `<div class="tick-in flex gap-3 px-4 py-2.5 border-b border-white/5">
+    <span class="font-mono text-[10px] text-slate-600 pt-0.5 whitespace-nowrap">${pad2(now.getHours())}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}</span>
+    <i data-lucide="${ic}" class="w-3.5 h-3.5 ${C[c]} mt-0.5 shrink-0"></i>
+    <span class="text-[12px] text-slate-300">${txt}</span></div>`;
+}
+function viewAutomation(){
+  const nodes=FLOW.map((n,i)=>`
+    <div class="flex items-center gap-0 shrink-0">
+      <div class="flow-node ${i===3?'node-active':''} w-[140px] rounded-xl border ${i===3?'border-brand-500/40 bg-brand-500/[.07]':'border-white/8 bg-ink-850'} p-3.5 text-center transition" data-node="${i}">
+        <div class="h-9 w-9 mx-auto rounded-lg grid place-items-center ${i===3?'bg-brand-500/20 text-brand-300':'bg-ink-800 text-slate-400'}"><i data-lucide="${n.ic}" class="w-4 h-4"></i></div>
+        <p class="mt-2 text-[12px] font-semibold text-slate-200">${n.t}</p>
+        <p class="text-[10px] text-slate-500 mt-0.5">${n.d}</p>
+      </div>
+      ${i<FLOW.length-1?`<svg width="40" height="24" class="shrink-0"><line x1="2" y1="12" x2="38" y2="12" stroke="#38bdf8" stroke-width="1.6" class="flow-line" opacity=".6"/><polygon points="34,7 40,12 34,17" fill="#38bdf8" opacity=".6"/></svg>`:''}
+    </div>`).join('');
+
+  const feed=[
+    {c:'red',ic:'shield-alert',t:'Escalada gerencial — PO-2026-4828',d:'52h sem retorno do fornecedor Polimar. Gerente de suprimentos notificado.',h:0.3},
+    {c:'amber',ic:'alert-triangle',t:'Atraso detectado — PO-2026-4807',d:'Motor de risco elevou prioridade para Crítico (Manaus).',h:1.2},
+    {c:'brand',ic:'bot',t:'Régua de follow-up disparada',d:'18 fornecedores notificados na janela D-3 automaticamente.',h:3},
+    {c:'emerald',ic:'check-circle-2',t:'ERP atualizado',d:'34 ordens sincronizadas com SAP via integração batch.',h:6},
+  ];
+  const Cf={red:'text-red-400 bg-red-500/12',amber:'text-amber-400 bg-amber-500/12',brand:'text-brand-400 bg-brand-500/12',emerald:'text-emerald-400 bg-emerald-500/12'};
+
+  return `
+  <div class="fade-up">
+    <div class="mb-5">
+      <h1 class="text-xl font-bold text-white tracking-tight">Fluxo de Automação de Suprimentos</h1>
+      <p class="text-[13px] text-slate-500 mt-1">Orquestração ponta a ponta · da emissão da PO à sincronização no ERP</p>
+    </div>
+
+    ${panel('Pipeline de orquestração','Estágio ativo: Atraso Detectado · 7 etapas automatizadas',
+      `<div class="p-6 overflow-x-auto"><div class="flex items-center min-w-max">${nodes}</div>
+       <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+         ${[['Eventos / 24h','3.842','activity'],['Follow-ups automáticos','1.107','bot'],['Escaladas hoje','23','shield-alert'],['Tempo médio de reação','11 min','timer']].map(([l,v,ic])=>`
+           <div class="rounded-lg border border-white/5 bg-ink-900 p-3"><div class="flex items-center gap-2 text-slate-500 text-[10px] uppercase tracking-wide"><i data-lucide="${ic}" class="w-3 h-3"></i>${l}</div><p class="text-lg font-bold text-white mt-1">${v}</p></div>`).join('')}
+       </div></div>`,
+      `<span class="flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold"><span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>Motor ativo</span>`)}
+
+    <div class="grid lg:grid-cols-2 gap-4 mt-5">
+      ${panel('Log de eventos em tempo real','Stream do motor de automação',
+        `<div id="logFeed" class="max-h-[320px] overflow-y-auto"></div>`,
+        `<span class="text-[10px] font-mono text-slate-600 flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-brand-400 pulse-amber"></span>live</span>`)}
+      ${panel('Central de notificações operacionais','Eventos que exigem ação',
+        `<div class="divide-y divide-white/5">${feed.map(f=>`
+          <div class="flex gap-3 px-5 py-4 hover:bg-white/[.03] transition">
+            <div class="h-8 w-8 rounded-lg grid place-items-center ${Cf[f.c]} shrink-0"><i data-lucide="${f.ic}" class="w-4 h-4"></i></div>
+            <div class="min-w-0 flex-1"><p class="text-[12px] font-semibold text-slate-200">${f.t}</p><p class="text-[11px] text-slate-500 mt-0.5">${f.d}</p></div>
+            <span class="text-[10px] text-slate-600 whitespace-nowrap">${relTime(f.h)}</span>
+          </div>`).join('')}</div>`)}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   VIEW: SUPPLIER PERFORMANCE
+============================================================ */
+function viewSuppliers(){
+  const top=SUP_PERF.slice(0,8);
+  const slaBars=top.slice(0,7).map(s=>({label:s.name.split(' ')[0],value:s.sla,color:s.sla>=88?'#34d399':s.sla>=78?'#fbbf24':'#f87171'}));
+  const trendData=SUP_PERF[0].trend;
+  const dParts=[{label:'No prazo',value:71,color:'#34d399'},{label:'Atraso leve',value:18,color:'#fbbf24'},{label:'Atraso crítico',value:11,color:'#f87171'}];
+  const dLeg=dParts.map(p=>`<div class="flex items-center justify-between text-[11px] py-1.5"><span class="flex items-center gap-2 text-slate-400"><span class="h-2 w-2 rounded-sm" style="background:${p.color}"></span>${p.label}</span><span class="font-mono text-slate-300">${p.value}%</span></div>`).join('');
+
+  const rows=SUP_PERF.map((s,i)=>{
+    const sc = s.score>=80?'text-emerald-400':s.score>=60?'text-amber-400':'text-red-400';
+    const medal = i<3?['🥇','🥈','🥉'][i]:'';
+    return `<tr class="data-row border-b border-white/5">
+      <td class="px-4 py-3"><span class="text-slate-600 font-mono text-[12px]">${String(i+1).padStart(2,'0')}</span></td>
+      <td class="px-4 py-3"><div class="flex items-center gap-2"><span>${medal||'<span class="text-slate-700">—</span>'}</span><div><p class="text-[12px] font-medium text-slate-200">${s.name}</p><p class="text-[10px] text-slate-600">${s.orders} ordens · 2026</p></div></div></td>
+      <td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-14 h-1.5 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full ${s.sla>=85?'bg-emerald-400':s.sla>=75?'bg-amber-400':'bg-red-400'}" style="width:${s.sla}%"></div></div><span class="text-[11px] font-mono text-slate-300">${s.sla}%</span></div></td>
+      <td class="px-4 py-3"><span class="text-[12px] font-mono ${s.delay>3?'text-red-400':'text-slate-300'}">${s.delay}d</span></td>
+      <td class="px-4 py-3"><span class="text-[12px] font-mono text-slate-300">${s.acc}%</span></td>
+      <td class="px-4 py-3"><span class="text-[12px] font-mono text-slate-400">${s.resp}h</span></td>
+      <td class="px-4 py-3">${spark(s.trend, s.trend[9]>=s.trend[0]?'#34d399':'#f87171')}</td>
+      <td class="px-4 py-3 text-right"><span class="text-[14px] font-bold ${sc}">${s.score}</span></td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="fade-up">
+    <div class="mb-5">
+      <h1 class="text-xl font-bold text-white tracking-tight">Performance de Fornecedores</h1>
+      <p class="text-[13px] text-slate-500 mt-1">Ranking consolidado · SLA, acuracidade de entrega, tempo de resposta e tendência histórica</p>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5 stagger">
+      ${[
+        {icon:'award',iconBg:'bg-emerald-500/12',iconC:'text-emerald-400',trend:'+3,4%',trendC:'text-emerald-400',trendIc:'trending-up',value:SUP_PERF[0].name.split(' ')[0],label:'Melhor fornecedor ('+SUP_PERF[0].score+' pts)'},
+        {icon:'gauge',iconBg:'bg-brand-500/12',iconC:'text-brand-400',trend:'+1,8%',trendC:'text-emerald-400',trendIc:'trending-up',value:Math.round(SUP_PERF.reduce((a,s)=>a+s.sla,0)/SUP_PERF.length)+'%',label:'SLA médio da base'},
+        {icon:'clock',iconBg:'bg-amber-500/12',iconC:'text-amber-400',trend:'-0,6h',trendC:'text-emerald-400',trendIc:'trending-down',value:(SUP_PERF.reduce((a,s)=>a+s.resp,0)/SUP_PERF.length).toFixed(1)+'h',label:'Tempo médio de resposta'},
+        {icon:'thumbs-down',iconBg:'bg-red-500/12',iconC:'text-red-400',trend:'crítico',trendC:'text-red-400',trendIc:'trending-up',value:SUP_PERF[SUP_PERF.length-1].name.split(' ')[0],label:'Pior performance ('+SUP_PERF[SUP_PERF.length-1].score+' pts)'},
+      ].map(kpi).join('')}
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4 mb-5">
+      ${panel('Tendência histórica de SLA','Líder do ranking · últimos 10 ciclos',
+        `<div class="p-5 h-[240px]">${areaChart(trendData,{labels:['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10'],max:100,suffix:'%'})}</div>`).replace('rounded-xl','rounded-xl lg:col-span-2')}
+      ${panel('Resultado das entregas','Base completa · 2026',
+        `<div class="p-5 flex flex-col items-center"><div class="flex justify-center">${donut(dParts,{center:'ENTREGAS'})}</div><div class="w-full mt-3 divide-y divide-white/5">${dLeg}</div></div>`)}
+    </div>
+
+    ${panel('SLA de cumprimento por fornecedor','Top 7 · % de ordens entregues no prazo',
+      `<div class="p-5 h-[240px]">${barChart(slaBars)}</div>`)}
+
+    <div class="mt-5">
+      ${panel('Ranking completo de fornecedores','Score composto: SLA · acuracidade · atraso · resposta',
+        `<div class="overflow-x-auto"><table class="w-full text-left min-w-[860px]">
+          <thead class="bg-ink-800/80"><tr class="text-[10px] uppercase tracking-wider text-slate-500">
+            <th class="px-4 py-3 font-semibold">#</th><th class="px-4 py-3 font-semibold">Fornecedor</th>
+            <th class="px-4 py-3 font-semibold">SLA</th><th class="px-4 py-3 font-semibold">Atraso médio</th>
+            <th class="px-4 py-3 font-semibold">Acuracidade</th><th class="px-4 py-3 font-semibold">Resposta</th>
+            <th class="px-4 py-3 font-semibold">Tendência</th><th class="px-4 py-3 font-semibold text-right">Score</th>
+          </tr></thead><tbody>${rows}</tbody></table></div>`)}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   WAREHOUSE DATA LAYER
+============================================================ */
+const MAT_DETAILS = [
+  ['Chapa de aço SAE 1020','Matéria-prima','kg'],
+  ['Rolamento 6204-ZZ','MRO','un'],
+  ['Resina PP injeção','Matéria-prima','kg'],
+  ['Cabo flexível 2,5mm²','Elétricos','m'],
+  ['Vedação NBR 70','MRO','un'],
+  ['Solvente industrial','Insumos químicos','L'],
+  ['Embalagem corrugada','Embalagens','cx'],
+  ['Parafuso sextavado M8','MRO','un'],
+  ['Tinta epóxi cinza','Insumos químicos','L'],
+  ['Óleo hidráulico ISO 68','Lubrificantes','L'],
+  ['Filme stretch 23µ','Embalagens','rolo'],
+  ['Pallet PBR madeira','Embalagens','un'],
+  ['Solda MIG ER70S-6','Matéria-prima','kg'],
+  ['Disco de corte 7"','Ferramentas','un'],
+  ['Cabo PP 3x2,5mm²','Elétricos','m'],
+  ['Disjuntor DIN 32A','Elétricos','un'],
+  ['Graxa lítio EP-2','Lubrificantes','kg'],
+  ['Etiqueta térmica 100x50','Embalagens','rolo'],
+  ['Broca HSS 10mm','Ferramentas','un'],
+  ['Filtro hidráulico 10µ','MRO','un'],
+  ['Sensor indutivo M12','Elétricos','un'],
+  ['Mangueira hidráulica R2','MRO','m'],
+  ['Resina epóxi 2K','Matéria-prima','kg'],
+  ['Caixa master 600x400','Embalagens','cx'],
+];
+const CATEGORY_IC = {'Matéria-prima':'package','MRO':'wrench','Elétricos':'plug-zap','Insumos químicos':'flask-conical','Embalagens':'box','Lubrificantes':'droplet','Ferramentas':'hammer'};
+
+const SKUS = MAT_DETAILS.map((m,i)=>{
+  const sku='ALM-26-'+String(2000+i*13).padStart(5,'0');
+  const min=ri(80,420);
+  const max=min*ri(4,7);
+  const dailyAvg=Math.max(3, Math.round(min/ri(6,14)));
+  const r=rnd();
+  let cur;
+  if(r<0.25) cur=ri(Math.max(5,Math.floor(min*0.15)), Math.max(10,min-1));
+  else if(r<0.50) cur=ri(min, Math.floor(min*1.4));
+  else cur=ri(Math.floor(min*1.6), Math.floor(max*0.9));
+  const coverage=+(cur/dailyAvg).toFixed(1);
+  const status= cur<min?'crit': cur<min*1.5?'att':'ok';
+  const supplier=pick(SUPPLIERS);
+  const dest=pick(UNITS);
+  const pending = (status!=='ok'|| rnd()<0.45)? ri(60,Math.max(120,min*2)) : 0;
+  const eta = pending? ri(-3,9) : null;
+  const trend = Array.from({length:14},()=>Math.max(1, Math.round(dailyAvg+(rnd()-0.5)*dailyAvg*0.5)));
+  return {sku,name:m[0],category:m[1],unit:m[2],cur,min,max,dailyAvg,coverage,status,supplier,dest,pending,eta,
+    etaStr: eta!==null?dateStr(eta):'—', trend, lastInv:relTime(rnd()*72+1), value:cur*ri(8,180)};
+});
+
+const INBOUND_ST = {
+  intransit:{label:'Em trânsito',cls:'bg-brand-500/12 text-brand-300 border-brand-500/25',dot:'bg-brand-400'},
+  atdock:{label:'No pátio',cls:'bg-indigo-500/12 text-indigo-300 border-indigo-500/25',dot:'bg-indigo-400'},
+  receiving:{label:'Em recebimento',cls:'bg-amber-500/12 text-amber-400 border-amber-500/25',dot:'bg-amber-400'},
+  received:{label:'Recebido',cls:'bg-emerald-500/12 text-emerald-400 border-emerald-500/25',dot:'bg-emerald-400'},
+  late:{label:'Atrasado',cls:'bg-red-500/12 text-red-400 border-red-500/25',dot:'bg-red-400'}
+};
+const CARRIERS=['JSL Logística','Bertolini Transportes','Rapidão Cometa','TNT Mercúrio','Patrus','Brasil Log','Atlas Cargas'];
+const ORIGINS=['São Paulo · SP','Curitiba · PR','Joinville · SC','Cotia · SP','Cubatão · SP','Suzano · SP','Belo Horizonte · MG'];
+const INBOUND = Array.from({length:16},(_,i)=>{
+  const r=rnd();
+  const st = r<0.20?'late': r<0.52?'intransit': r<0.68?'atdock': r<0.86?'receiving':'received';
+  const eta= st==='late'? ri(-5,-1) : st==='received'? ri(-2,0) : ri(0,5);
+  return {
+    asn:'ASN-26-'+String(8400+i*9).padStart(5,'0'),
+    supplier:pick(SUPPLIERS), carrier:pick(CARRIERS),
+    plate:'BR'+ri(10,99)+pick(['A','B','C','D','E'])+ri(1000,9999),
+    items:ri(2,11), eta, etaStr:dateStr(eta), status:st,
+    origin:pick(ORIGINS), dest:pick(UNITS), dock:(st==='atdock'||st==='receiving')?'D'+ri(1,8):'—',
+    invoice: st==='received'?'Conferida': st==='receiving'?'Em conferência': st==='atdock'?'Recebida': st==='late'?'Pendente':'Aguardando',
+    progress: st==='late'?20: st==='intransit'?55: st==='atdock'?75: st==='receiving'?88:100,
+  };
+});
+
+const WH_UNITS = UNITS.map(u=>{
+  const items=SKUS.filter(s=>s.dest.id===u.id);
+  const crit=items.filter(s=>s.status==='crit').length;
+  const inbound=INBOUND.filter(i=>i.dest.id===u.id);
+  const inboundLate=inbound.filter(i=>i.status==='late').length;
+  const score = Math.max(22, 100 - crit*8 - inboundLate*6 - ri(0,12));
+  const sev = score<55?'Crítico':score<75?'Atenção':'Saudável';
+  const trend = Array.from({length:14},()=>+(40+rnd()*55).toFixed(1));
+  return {...u, items:items.length, crit, inbound:inbound.length, inboundLate, score, risk:100-score, sev, trend,
+    lastInv:relTime(rnd()*72+1), topMat: (items.find(s=>s.status==='crit')?.name) || (items[0]?.name) || '—'};
+}).sort((a,b)=>a.score-b.score);
+
+/* ============================================================
+   VIEW: WAREHOUSE CONTROL CENTER
+============================================================ */
+let wFilter={q:'',unit:'all',risk:'all',sup:'all',critOnly:false};
+function wRows(){
+  let rows=SKUS.filter(s=>{
+    if(wFilter.critOnly && s.status!=='crit') return false;
+    if(wFilter.risk!=='all' && s.status!==wFilter.risk) return false;
+    if(wFilter.unit!=='all' && s.dest.id!==wFilter.unit) return false;
+    if(wFilter.sup!=='all' && s.supplier!==wFilter.sup) return false;
+    if(wFilter.q){const q=wFilter.q.toLowerCase();return (s.name+s.sku+s.category+s.supplier+s.dest.name).toLowerCase().includes(q);}
+    return true;
+  });
+  if(!rows.length) return `<tr><td colspan="11" class="text-center py-12 text-slate-600 text-sm">Nenhum material atende aos filtros.</td></tr>`;
+  const stCls={crit:'bg-red-500/12 text-red-400 border-red-500/25',att:'bg-amber-500/12 text-amber-400 border-amber-500/25',ok:'bg-emerald-500/12 text-emerald-400 border-emerald-500/25'};
+  const stLbl={crit:'Crítico',att:'Atenção',ok:'Saudável'};
+  return rows.map((s,idx)=>{
+    const pct = Math.min(100, Math.round(s.cur/s.max*100));
+    const barCol = s.status==='crit'?'from-red-500 to-orange-500':s.status==='att'?'from-amber-500 to-yellow-400':'from-emerald-500 to-emerald-400';
+    const id='w'+idx;
+    return `
+    <tr class="data-row row-toggle border-b border-white/5 cursor-pointer" data-wrow="${id}">
+      <td class="px-3 py-3"><div class="flex items-center gap-2"><i data-lucide="chevron-right" class="chev w-3.5 h-3.5 text-slate-600"></i><div><p class="text-[12px] font-medium text-slate-200">${s.name}</p><p class="text-[10px] text-slate-600">${s.category}</p></div></div></td>
+      <td class="px-3 py-3"><span class="font-mono text-[11px] text-brand-300">${s.sku}</span></td>
+      <td class="px-3 py-3"><span class="text-[11px] text-slate-400">${s.category}</span></td>
+      <td class="px-3 py-3"><div class="flex flex-col gap-1"><div class="flex items-baseline gap-1"><span class="text-[12px] font-mono font-semibold ${s.status==='crit'?'text-red-400':'text-slate-200'}">${s.cur.toLocaleString('pt-BR')}</span><span class="text-[10px] text-slate-600">${s.unit}</span></div><div class="w-24 h-1 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r ${barCol}" style="width:${pct}%"></div></div></div></td>
+      <td class="px-3 py-3"><span class="text-[11px] font-mono text-slate-500">${s.min.toLocaleString('pt-BR')}</span></td>
+      <td class="px-3 py-3"><span class="text-[11px] text-slate-500">${s.unit}</span></td>
+      <td class="px-3 py-3"><span class="text-[12px] font-mono ${s.coverage<3?'text-red-400 font-semibold':s.coverage<7?'text-amber-400':'text-slate-300'}">${s.coverage}d</span></td>
+      <td class="px-3 py-3">${s.pending?`<span class="text-[11px] font-mono text-brand-300">+${s.pending.toLocaleString('pt-BR')}</span>`:`<span class="text-[11px] text-slate-700">—</span>`}</td>
+      <td class="px-3 py-3"><span class="text-[11px] text-slate-400">${s.supplier}</span><p class="text-[10px] text-slate-600">${s.dest.name}</p></td>
+      <td class="px-3 py-3"><span class="text-[11px] font-mono ${s.eta!==null && s.eta<0?'text-red-400':'text-slate-400'}">${s.etaStr}</span></td>
+      <td class="px-3 py-3"><span class="text-[10px] font-medium px-2 py-1 rounded border ${stCls[s.status]}">${stLbl[s.status]}</span></td>
+    </tr>
+    <tr class="hidden bg-ink-900/60" data-wdet="${id}">
+      <td colspan="11" class="px-0 py-0">
+        <div class="px-6 py-5 grid lg:grid-cols-3 gap-6 border-b border-white/5">
+          <div class="lg:col-span-2">
+            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-3">Tendência de consumo · 14 dias</p>
+            <div class="h-[120px]">${areaChart(s.trend,{max:Math.max(...s.trend)*1.2})}</div>
+            <div class="grid grid-cols-4 gap-3 mt-4 text-[11px]">
+              <div><p class="text-slate-500">Consumo médio/dia</p><p class="font-mono text-slate-200 text-base mt-0.5">${s.dailyAvg} ${s.unit}</p></div>
+              <div><p class="text-slate-500">Cobertura projetada</p><p class="font-mono ${s.coverage<3?'text-red-400':'text-slate-200'} text-base mt-0.5">${s.coverage} dias</p></div>
+              <div><p class="text-slate-500">Valor em estoque</p><p class="font-mono text-slate-200 text-base mt-0.5">${BRL(s.value)}</p></div>
+              <div><p class="text-slate-500">Última contagem</p><p class="text-slate-300 text-[12px] mt-0.5">${s.lastInv}</p></div>
+            </div>
+          </div>
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-3">Reposição em curso</p>
+            ${s.pending? `
+              <div class="rounded-lg border border-white/5 bg-ink-900 p-3 mb-3 space-y-1.5">
+                <div class="flex justify-between text-[11px]"><span class="text-slate-500">Quantidade prevista</span><span class="font-mono text-brand-300">+${s.pending.toLocaleString('pt-BR')} ${s.unit}</span></div>
+                <div class="flex justify-between text-[11px]"><span class="text-slate-500">Fornecedor</span><span class="text-slate-300">${s.supplier}</span></div>
+                <div class="flex justify-between text-[11px]"><span class="text-slate-500">Chegada prevista</span><span class="font-mono ${s.eta<0?'text-red-400':'text-slate-300'}">${s.etaStr}${s.eta<0?` (+${Math.abs(s.eta)}d)`:''}</span></div>
+              </div>`:`<div class="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 mb-3 text-[11px] text-amber-300 flex gap-2"><i data-lucide="alert-triangle" class="w-3.5 h-3.5 mt-0.5 shrink-0"></i> Sem reposição programada para este SKU.</div>`}
+            <div class="flex flex-col gap-2">
+              <button data-act="Solicitação emergencial criada" class="actbtn text-[11px] font-semibold bg-red-500/15 text-red-300 border border-red-500/25 hover:bg-red-500/25 rounded-lg px-3 py-2 flex items-center justify-center gap-1.5"><i data-lucide="siren" class="w-3.5 h-3.5"></i> Compra emergencial</button>
+              <button data-act="Realocação inter-unidades solicitada" class="actbtn text-[11px] font-semibold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 rounded-lg px-3 py-2 flex items-center justify-center gap-1.5"><i data-lucide="repeat" class="w-3.5 h-3.5"></i> Realocar lote</button>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function viewWarehouse(){
+  const crit = SKUS.filter(s=>s.status==='crit').length;
+  const incomingToday = INBOUND.filter(i=>i.eta>=0 && i.eta<=1).length;
+  const delayedInbound = INBOUND.filter(i=>i.status==='late').length;
+  const unitOpts = UNITS.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
+  const supOpts = [...new Set(SKUS.map(s=>s.supplier))].sort().map(s=>`<option value="${s}">${s}</option>`).join('');
+  const kpis = [
+    {icon:'package',iconBg:'bg-brand-500/12',iconC:'text-brand-400',trend:'catálogo',trendC:'text-slate-500',trendIc:'minus',value:'1.847',label:'SKUs cadastrados'},
+    {icon:'alert-octagon',iconBg:'bg-red-500/12',iconC:'text-red-400',trend:'+3',trendC:'text-red-400',trendIc:'trending-up',value:crit,label:'Itens críticos'},
+    {icon:'arrow-down-to-line',iconBg:'bg-amber-500/12',iconC:'text-amber-400',trend:'abaixo mín.',trendC:'text-amber-400',trendIc:'trending-up',value:crit,label:'Abaixo do mínimo'},
+    {icon:'truck',iconBg:'bg-brand-500/12',iconC:'text-brand-400',trend:'hoje',trendC:'text-brand-400',trendIc:'trending-up',value:incomingToday,label:'Entradas previstas hoje'},
+    {icon:'alarm-clock',iconBg:'bg-red-500/12',iconC:'text-red-400',trend:'+2',trendC:'text-red-400',trendIc:'trending-up',value:delayedInbound,label:'Recebimentos atrasados'},
+    {icon:'gauge',iconBg:'bg-emerald-500/12',iconC:'text-emerald-400',trend:'+0,3%',trendC:'text-emerald-400',trendIc:'trending-up',value:'98,4%',label:'Acuracidade do inventário'},
+    {icon:'siren',iconBg:'bg-orange-500/12',iconC:'text-orange-400',trend:'crítico',trendC:'text-red-400',trendIc:'trending-up',value:3,label:'Unidades em risco operacional'},
+    {icon:'flame',iconBg:'bg-red-500/12',iconC:'text-red-400',trend:'aberto',trendC:'text-red-400',trendIc:'trending-up',value:7,label:'Compras emergenciais em aberto'},
+  ];
+  return `
+  <div class="fade-up">
+    <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight">Controle de Almoxarifado</h1>
+        <p class="text-[13px] text-slate-500 mt-1">Saúde do estoque · níveis mínimos · risco operacional · janelas de reposição</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="text-[12px] text-slate-400 border border-white/5 bg-ink-850 hover:border-white/15 rounded-lg px-3 py-2 flex items-center gap-1.5"><i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Inventário</button>
+        <button class="text-[12px] text-ink-950 font-semibold bg-brand-500 hover:bg-brand-400 rounded-lg px-3 py-2 flex items-center gap-1.5 shadow-glow"><i data-lucide="siren" class="w-3.5 h-3.5"></i> Compra emergencial</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3 mb-5 stagger">${kpis.map(kpi).join('')}</div>
+
+    <div class="rounded-xl border border-white/5 bg-ink-850 shadow-card overflow-hidden">
+      <div class="flex flex-wrap items-center gap-3 px-4 py-3.5 border-b border-white/5">
+        <div class="relative flex-1 min-w-[220px]">
+          <i data-lucide="search" class="w-4 h-4 text-slate-600 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input id="wSearch" value="${wFilter.q}" placeholder="Buscar SKU, material, categoria, fornecedor…" class="w-full bg-ink-900 border border-white/5 rounded-lg pl-9 pr-3 py-2 text-[12px] text-slate-300 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-brand-500/40">
+        </div>
+        <select id="wUnit" class="bg-ink-900 border border-white/5 rounded-lg px-2.5 py-2 text-[12px] text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-500/40">
+          <option value="all">Todas as unidades</option>${unitOpts}
+        </select>
+        <select id="wRisk" class="bg-ink-900 border border-white/5 rounded-lg px-2.5 py-2 text-[12px] text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-500/40">
+          <option value="all">Todos os riscos</option><option value="crit">Crítico</option><option value="att">Atenção</option><option value="ok">Saudável</option>
+        </select>
+        <select id="wSup" class="bg-ink-900 border border-white/5 rounded-lg px-2.5 py-2 text-[12px] text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-500/40 max-w-[220px]">
+          <option value="all">Todos os fornecedores</option>${supOpts}
+        </select>
+        <label class="flex items-center gap-2 text-[12px] text-slate-400 cursor-pointer select-none">
+          <input id="wCrit" type="checkbox" ${wFilter.critOnly?'checked':''} class="h-4 w-4 rounded border-white/20 bg-ink-900 accent-red-500">
+          Apenas críticos
+        </label>
+      </div>
+      <div class="overflow-x-auto max-h-[calc(100vh-360px)] overflow-y-auto">
+        <table class="w-full text-left min-w-[1200px]">
+          <thead class="sticky top-0 z-10 bg-ink-800/95 glass">
+            <tr class="text-[10px] uppercase tracking-wider text-slate-500">
+              <th class="px-3 py-3 font-semibold">Material</th>
+              <th class="px-3 py-3 font-semibold">SKU</th>
+              <th class="px-3 py-3 font-semibold">Categoria</th>
+              <th class="px-3 py-3 font-semibold">Estoque atual</th>
+              <th class="px-3 py-3 font-semibold">Mínimo</th>
+              <th class="px-3 py-3 font-semibold">Un.</th>
+              <th class="px-3 py-3 font-semibold">Cobertura</th>
+              <th class="px-3 py-3 font-semibold">Entrada pend.</th>
+              <th class="px-3 py-3 font-semibold">Fornecedor / unidade</th>
+              <th class="px-3 py-3 font-semibold">Chegada prev.</th>
+              <th class="px-3 py-3 font-semibold">Risco</th>
+            </tr>
+          </thead>
+          <tbody id="wBody">${wRows()}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   VIEW: WAREHOUSE OPERATIONAL MAP
+============================================================ */
+function viewWarehouseMap(){
+  const sevCls={'Crítico':'border-red-500/30 text-red-400 bg-red-500/12','Atenção':'border-amber-500/25 text-amber-400 bg-amber-500/10','Saudável':'border-emerald-500/25 text-emerald-400 bg-emerald-500/10'};
+  const heatCol = s => s<55?'#f87171': s<75?'#fbbf24':'#34d399';
+
+  const cards = WH_UNITS.map(u=>`
+    <div class="unit-card rounded-xl border ${u.sev==='Crítico'?'border-red-500/30':'border-white/5'} bg-ink-850 shadow-card overflow-hidden">
+      <div class="px-4 pt-4 pb-3 flex items-start justify-between border-b border-white/5">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-lg bg-ink-800 grid place-items-center"><i data-lucide="warehouse" class="w-4 h-4 text-slate-400"></i></div>
+          <div><p class="text-[13px] font-semibold text-slate-100">${u.name}</p><p class="text-[10px] text-slate-500">${u.city}</p></div>
+        </div>
+        ${ring(u.score)}
+      </div>
+      <div class="px-4 py-3 grid grid-cols-2 gap-3 text-[11px]">
+        <div class="rounded-lg bg-ink-900 px-3 py-2"><p class="text-[9px] text-slate-600 uppercase tracking-wide">Risco de ruptura</p><p class="text-[15px] font-bold font-mono" style="color:${heatCol(u.score)}">${u.risk}%</p></div>
+        <div class="rounded-lg bg-ink-900 px-3 py-2"><p class="text-[9px] text-slate-600 uppercase tracking-wide">Materiais críticos</p><p class="text-[15px] font-bold ${u.crit>0?'text-red-400':'text-slate-300'}">${u.crit}</p></div>
+        <div class="rounded-lg bg-ink-900 px-3 py-2"><p class="text-[9px] text-slate-600 uppercase tracking-wide">Entradas atrasadas</p><p class="text-[15px] font-bold ${u.inboundLate>0?'text-amber-400':'text-slate-300'}">${u.inboundLate}<span class="text-[10px] text-slate-500">/${u.inbound}</span></p></div>
+        <div class="rounded-lg bg-ink-900 px-3 py-2"><p class="text-[9px] text-slate-600 uppercase tracking-wide">SKUs ativos</p><p class="text-[15px] font-bold text-slate-200">${u.items}</p></div>
+      </div>
+      <div class="px-4 pb-3">
+        <p class="text-[9px] text-slate-600 mb-1 uppercase tracking-wider">Consumo · 14 dias</p>
+        <div class="h-[42px]">${areaChart(u.trend,{w:300,h:42,max:Math.max(...u.trend)*1.2})}</div>
+      </div>
+      <div class="px-4 py-2.5 border-t border-white/5 flex items-center justify-between text-[10px]">
+        <span class="font-semibold px-2 py-1 rounded border ${sevCls[u.sev]}">${u.sev}</span>
+        <span class="text-slate-500">Inventário ${u.lastInv}</span>
+      </div>
+      ${u.crit>0?`<div class="px-4 py-2 bg-red-500/[.06] border-t border-red-500/15 text-[11px] text-red-300 flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-red-400 pulse-red"></span>Impacto: <span class="text-red-200 font-medium truncate">${u.topMat}</span></div>`:''}
+    </div>`).join('');
+
+  const cats = [...new Set(SKUS.map(s=>s.category))];
+  const heatRows = cats.map(cat=>{
+    const cells = UNITS.map(u=>{
+      const items=SKUS.filter(s=>s.category===cat && s.dest.id===u.id);
+      const cc=items.filter(s=>s.status==='crit').length;
+      const cAtt=items.filter(s=>s.status==='att').length;
+      const score = items.length? (cc*2+cAtt)/(items.length*2)*100 : 0;
+      const col = items.length===0?'rgba(255,255,255,.03)': score>40?'rgba(248,113,113,.85)': score>15?'rgba(251,191,36,.7)':'rgba(52,211,153,.45)';
+      return `<div class="h-7 rounded grid place-items-center text-[9px] font-mono text-white/85 border border-white/[.04]" style="background:${col}" title="${cat} · ${u.name} · ${items.length} SKUs">${items.length||''}</div>`;
+    }).join('');
+    return `<div class="text-[10px] text-slate-400 pr-2 flex items-center">${cat}</div>${cells}`;
+  }).join('');
+  const heatHeader = UNITS.map(u=>`<div class="text-[9px] text-slate-600 text-center truncate">${u.id}</div>`).join('');
+
+  return `
+  <div class="fade-up">
+    <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight">Mapa Operacional do Almoxarifado</h1>
+        <p class="text-[13px] text-slate-500 mt-1">Saúde de estoque por unidade · severidade cruzada por categoria de material</p>
+      </div>
+      <div class="flex items-center gap-2 text-[12px]">
+        <span class="px-3 py-1.5 rounded-lg border border-red-500/25 bg-red-500/10 text-red-400 font-medium">${WH_UNITS.filter(u=>u.sev==='Crítico').length} unidade(s) crítica(s)</span>
+        <span class="px-3 py-1.5 rounded-lg border border-amber-500/25 bg-amber-500/10 text-amber-400 font-medium">${WH_UNITS.filter(u=>u.sev==='Atenção').length} em atenção</span>
+      </div>
+    </div>
+
+    ${panel('Heatmap de risco — Categoria × Unidade','Densidade de SKUs e severidade média por célula',
+      `<div class="p-5">
+        <div class="grid gap-1.5 items-center" style="grid-template-columns: 150px repeat(${UNITS.length},minmax(0,1fr))">
+          <div></div>${heatHeader}
+          ${heatRows}
+        </div>
+        <div class="flex items-center gap-4 mt-4 text-[10px] text-slate-500"><span class="flex items-center gap-1.5"><span class="h-2 w-3 rounded" style="background:rgba(52,211,153,.45)"></span>Baixo</span><span class="flex items-center gap-1.5"><span class="h-2 w-3 rounded" style="background:rgba(251,191,36,.7)"></span>Atenção</span><span class="flex items-center gap-1.5"><span class="h-2 w-3 rounded" style="background:rgba(248,113,113,.85)"></span>Crítico</span><span class="text-slate-600">· números = SKUs ativos por célula</span></div>
+      </div>`)}
+
+    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 stagger mt-5">${cards}</div>
+  </div>`;
+}
+
+/* ============================================================
+   VIEW: INBOUND LOGISTICS MONITORING
+============================================================ */
+function viewInbound(){
+  const inTransit=INBOUND.filter(i=>i.status==='intransit').length;
+  const late=INBOUND.filter(i=>i.status==='late').length;
+  const atDock=INBOUND.filter(i=>i.status==='atdock'||i.status==='receiving').length;
+  const todayArr=INBOUND.filter(i=>i.eta>=0 && i.eta<=1).length;
+  const kpis=[
+    {icon:'truck',iconBg:'bg-brand-500/12',iconC:'text-brand-400',trend:'em trânsito',trendC:'text-brand-400',trendIc:'activity',value:inTransit,label:'Cargas em trânsito'},
+    {icon:'alarm-clock',iconBg:'bg-red-500/12',iconC:'text-red-400',trend:'crítico',trendC:'text-red-400',trendIc:'trending-up',value:late,label:'Entregas atrasadas'},
+    {icon:'square-parking',iconBg:'bg-indigo-500/12',iconC:'text-indigo-300',trend:'no pátio',trendC:'text-indigo-300',trendIc:'minus',value:atDock,label:'No pátio / recebendo'},
+    {icon:'calendar-clock',iconBg:'bg-emerald-500/12',iconC:'text-emerald-400',trend:'hoje/D+1',trendC:'text-emerald-400',trendIc:'trending-up',value:todayArr,label:'Chegadas previstas'},
+  ];
+
+  const sorted=INBOUND.slice().sort((a,b)=> (a.status==='late'?0:1) - (b.status==='late'?0:1));
+  const rows = sorted.map(i=>{
+    const st=INBOUND_ST[i.status];
+    return `<tr class="data-row border-b border-white/5">
+      <td class="px-3 py-3"><span class="font-mono text-[11px] text-brand-300">${i.asn}</span></td>
+      <td class="px-3 py-3"><p class="text-[12px] text-slate-200">${i.supplier}</p><p class="text-[10px] text-slate-600">${i.origin}</p></td>
+      <td class="px-3 py-3"><p class="text-[11px] text-slate-400">${i.carrier}</p><p class="text-[10px] text-slate-600 font-mono">${i.plate}</p></td>
+      <td class="px-3 py-3"><span class="text-[11px] text-slate-400">${i.dest.name}</span><p class="text-[10px] text-slate-600">${i.dest.city}</p></td>
+      <td class="px-3 py-3"><span class="text-[11px] font-mono text-slate-300">${i.items} itens</span></td>
+      <td class="px-3 py-3"><span class="text-[11px] font-mono ${i.eta<0?'text-red-400 font-semibold':'text-slate-300'}">${i.etaStr}</span></td>
+      <td class="px-3 py-3"><span class="inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-1 rounded-md border ${st.cls}"><span class="h-1.5 w-1.5 rounded-full ${st.dot} ${i.status==='late'?'pulse-red':''}"></span>${st.label}</span></td>
+      <td class="px-3 py-3"><span class="text-[11px] text-slate-400">${i.dock}</span></td>
+      <td class="px-3 py-3"><span class="text-[11px] ${i.invoice==='Pendente'?'text-amber-400':i.invoice==='Aguardando'?'text-slate-500':'text-emerald-400'}">${i.invoice}</span></td>
+      <td class="px-3 py-3 w-[160px]"><div class="h-1.5 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full ${i.status==='late'?'bg-red-400':i.status==='received'?'bg-emerald-400':'bg-brand-400'}" style="width:${i.progress}%"></div></div></td>
+    </tr>`;
+  }).join('');
+
+  const dockRows = Array.from({length:8},(_,d)=>{
+    const docked = INBOUND.filter(i=>i.dock==='D'+(d+1));
+    return `<div class="grid items-center gap-0.5" style="grid-template-columns:36px repeat(12,minmax(0,1fr))">
+      <div class="text-[10px] text-slate-500 font-mono">D${d+1}</div>
+      ${Array.from({length:12},(_,h)=>{
+        const b = docked[Math.floor(h/3)];
+        const occupied = b && h>=2 && h<=2+docked.length*2;
+        if(occupied){
+          const lbl=b.supplier.split(' ')[0].slice(0,5);
+          return `<div class="h-5 rounded ${b.status==='late'?'bg-red-500/40 border-red-500/40':'bg-brand-500/35 border-brand-500/30'} border grid place-items-center text-[8px] font-mono text-white/85 truncate px-1" title="${b.asn} · ${b.supplier}">${lbl}</div>`;
+        }
+        return `<div class="h-5 rounded bg-white/[.03]"></div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+
+  const focus = INBOUND.find(i=>i.status==='late') || INBOUND[0];
+  const steps=['Fornecedor','Pedido criado','Em trânsito','Chegada CD','Em recebimento','Estoque disponível'];
+  const stepIcs=['building-2','file-plus','truck','warehouse','package-open','check-check'];
+  const stepIdx = focus.status==='late'?2 : focus.status==='intransit'?2 : focus.status==='atdock'?3 : focus.status==='receiving'?4 : focus.status==='received'?5 : 1;
+
+  return `
+  <div class="fade-up">
+    <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight">Monitoramento de Logística de Entrada</h1>
+        <p class="text-[13px] text-slate-500 mt-1">Cargas em trânsito · pátio · janelas de docas · ASN e nota fiscal</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5 stagger">${kpis.map(kpi).join('')}</div>
+
+    ${panel('Carga em foco — risco crítico de entrega', focus.asn+' · '+focus.supplier,
+      `<div class="p-5">
+        <div class="flex flex-wrap items-center gap-2 mb-5">
+          ${steps.map((s,i)=>`
+            <div class="flex items-center gap-2 shrink-0">
+              <div class="h-8 w-8 rounded-full grid place-items-center border ${i<=stepIdx?'border-brand-500/40 bg-brand-500/15 text-brand-300':'border-white/10 bg-ink-900 text-slate-600'} ${i===stepIdx?'node-active':''}"><i data-lucide="${stepIcs[i]}" class="w-3.5 h-3.5"></i></div>
+              <div class="text-[11px] ${i<=stepIdx?'text-slate-200':'text-slate-600'} font-medium">${s}</div>
+              ${i<steps.length-1?`<svg width="32" height="2"><line x1="0" y1="1" x2="32" y2="1" stroke="${i<stepIdx?'#38bdf8':'#1e293b'}" stroke-width="2" ${i<stepIdx?'class="flow-line"':''}/></svg>`:''}
+            </div>`).join('')}
+        </div>
+        <div class="grid sm:grid-cols-4 gap-3 text-[12px]">
+          <div><p class="text-slate-500 text-[10px] uppercase">Transportadora</p><p class="text-slate-200 mt-0.5">${focus.carrier}</p></div>
+          <div><p class="text-slate-500 text-[10px] uppercase">Origem → Destino</p><p class="text-slate-200 mt-0.5">${focus.origin} → ${focus.dest.city}</p></div>
+          <div><p class="text-slate-500 text-[10px] uppercase">ETA recalculada</p><p class="${focus.eta<0?'text-red-400':'text-slate-200'} font-mono mt-0.5">${focus.etaStr}${focus.eta<0?` (+${Math.abs(focus.eta)}d)`:''}</p></div>
+          <div><p class="text-slate-500 text-[10px] uppercase">Predição de risco</p><p class="text-red-400 font-semibold mt-0.5">${focus.status==='late'?'Alto · 78%':'Médio · 42%'}</p></div>
+        </div>
+      </div>`,
+      `<span class="text-[11px] text-red-400 font-semibold flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-red-400 pulse-red"></span>${focus.status==='late'?'Em atraso':'Em monitoramento'}</span>`)}
+
+    <div class="grid lg:grid-cols-3 gap-4 mt-5">
+      ${panel('Fila de recebimento','ASNs aguardando processamento',
+        `<div class="overflow-x-auto"><table class="w-full text-left min-w-[960px]">
+          <thead class="sticky top-0 z-10 bg-ink-800/95 glass"><tr class="text-[10px] uppercase tracking-wider text-slate-500">
+            <th class="px-3 py-3 font-semibold">ASN</th><th class="px-3 py-3 font-semibold">Fornecedor</th>
+            <th class="px-3 py-3 font-semibold">Transportadora</th><th class="px-3 py-3 font-semibold">Destino</th>
+            <th class="px-3 py-3 font-semibold">Itens</th><th class="px-3 py-3 font-semibold">ETA</th>
+            <th class="px-3 py-3 font-semibold">Status</th><th class="px-3 py-3 font-semibold">Doca</th>
+            <th class="px-3 py-3 font-semibold">NF</th><th class="px-3 py-3 font-semibold">Progresso</th>
+          </tr></thead><tbody>${rows}</tbody></table></div>`).replace('rounded-xl','rounded-xl lg:col-span-2')}
+
+      ${panel('Agenda de docas','Próximas janelas operacionais',
+        `<div class="p-4 space-y-1.5">${dockRows}
+          <div class="flex items-center justify-between mt-4 pt-3 border-t border-white/5 text-[10px] text-slate-500">
+            <span class="flex items-center gap-1.5"><span class="h-2 w-3 rounded bg-brand-500/35 border border-white/10"></span>Alocada</span>
+            <span class="flex items-center gap-1.5"><span class="h-2 w-3 rounded bg-red-500/40 border border-white/10"></span>Atrasada</span>
+          </div>
+        </div>`)}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   VIEW: INVENTORY INTELLIGENCE
+============================================================ */
+function viewIntel(){
+  const ruptureRisk = SKUS.filter(s=>s.status==='crit'||s.coverage<7).sort((a,b)=>a.coverage-b.coverage).slice(0,6);
+  const overstock = SKUS.filter(s=>s.coverage>30).sort((a,b)=>b.coverage-a.coverage).slice(0,4);
+  const slowMoving = SKUS.filter(s=>s.coverage>18 && s.coverage<=30).slice(0,4);
+
+  const recs=[
+    {pri:'crit',ic:'flame',t:'Antecipar reposição de Resina PP injeção',d:'Cobertura projetada de 1,8 dia em Planta Manaus. Ruptura iminente impactando 2 linhas de injeção. Sugerimos pedido emergencial de 3.500 kg com Polimar Componentes.',action:'Criar PO emergencial · 3.500 kg',saving:'-R$ 184k em parada evitada'},
+    {pri:'warn',ic:'repeat',t:'Realocar lote entre unidades',d:'CD São Paulo possui 480% acima do nível ótimo de Tinta epóxi cinza. Planta Betim opera em risco crítico do mesmo SKU. Realocação cobre 12 dias adicionais.',action:'Solicitar transferência inter-unidades',saving:'Economia R$ 47k em frete consolidado'},
+    {pri:'crit',ic:'shield-alert',t:'Substituir fornecedor reincidente',d:'Metalúrgica Andrade atrasou 7 das últimas 9 entregas de Chapa SAE 1020. Considerar TecnoAço Brasil — SLA 94% e lead time 6 dias menor.',action:'Acionar fornecedor alternativo',saving:'Reduz exposição em 38%'},
+    {pri:'info',ic:'trending-down',t:'Suspender pedido de Pallet PBR',d:'Inventário equivalente a 47 dias úteis e consumo projetado em queda de 18% no próximo ciclo. PO-2026-4862 pode ser cancelada sem impacto.',action:'Solicitar cancelamento da PO',saving:'Libera R$ 92k em capital de giro'},
+    {pri:'warn',ic:'sparkles',t:'Recalibrar mínimo de Rolamento 6204-ZZ',d:'Sazonalidade subiu 22% nos últimos 3 ciclos. O mínimo atual está calibrado para baseline antigo, gerando emergenciais recorrentes.',action:'Atualizar parâmetro de mínimo',saving:'Reduz emergenciais em 1,4×/mês'},
+    {pri:'info',ic:'package-search',t:'Consolidar SKUs equivalentes',d:'Foram identificados 3 SKUs distintos para o mesmo Cabo PP 3x2,5mm² entre CAX, BTM e CTG. Consolidação simplifica o MRP e a contagem cíclica.',action:'Solicitar consolidação',saving:'-9% em complexidade de planejamento'},
+  ];
+  const PRI={crit:{cls:'border-red-500/30 bg-red-500/[.06]',ic:'text-red-400 bg-red-500/15',lbl:'Crítico',lblCls:'text-red-300 bg-red-500/15 border-red-500/25'},
+             warn:{cls:'border-amber-500/25 bg-amber-500/[.04]',ic:'text-amber-400 bg-amber-500/15',lbl:'Atenção',lblCls:'text-amber-300 bg-amber-500/15 border-amber-500/25'},
+             info:{cls:'border-brand-500/25 bg-brand-500/[.04]',ic:'text-brand-300 bg-brand-500/15',lbl:'Oportunidade',lblCls:'text-brand-300 bg-brand-500/15 border-brand-500/25'}};
+
+  const recCards = recs.map(r=>{const p=PRI[r.pri];return `
+    <div class="rounded-xl border ${p.cls} p-4">
+      <div class="flex items-start gap-3">
+        <div class="h-9 w-9 rounded-lg grid place-items-center ${p.ic} shrink-0"><i data-lucide="${r.ic}" class="w-4 h-4"></i></div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2 mb-1.5"><span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border ${p.lblCls}">${p.lbl}</span><span class="text-[10px] text-slate-500">Recomendação do motor</span></div>
+          <p class="text-[13px] font-semibold text-slate-100">${r.t}</p>
+          <p class="text-[11px] text-slate-400 mt-1.5 leading-relaxed">${r.d}</p>
+          <div class="flex items-center justify-between mt-3 pt-3 border-t border-white/5 gap-2">
+            <button class="actbtn text-[11px] font-semibold bg-white/5 text-slate-200 hover:bg-white/10 border border-white/10 rounded-lg px-3 py-1.5 flex items-center gap-1.5 shrink-0" data-act="${r.action} aplicada"><i data-lucide="zap" class="w-3 h-3"></i> ${r.action}</button>
+            <span class="text-[10px] text-emerald-400 font-mono text-right">${r.saving}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;}).join('');
+
+  const focus = SKUS.find(s=>s.status==='crit') || SKUS[0];
+  const fcSeries = Array.from({length:7},(_,i)=> Math.max(2, Math.round(focus.dailyAvg + (rnd()-0.4)*focus.dailyAvg*0.4)));
+
+  const forecastChart = (()=>{
+    const all=[...focus.trend, ...fcSeries], w=720,h=220,pl=38,pr=14,pt=22,pb=24;
+    const max=Math.max(...all)*1.25, iw=w-pl-pr, ih=h-pt-pb;
+    const xs=i=>pl+(i/(all.length-1))*iw, ys=v=>pt+ih-(v/max)*ih;
+    const histLine=focus.trend.map((v,i)=>(i?'L':'M')+xs(i).toFixed(1)+' '+ys(v).toFixed(1)).join(' ');
+    const fcLine='M'+xs(focus.trend.length-1).toFixed(1)+' '+ys(focus.trend[focus.trend.length-1]).toFixed(1)+' '+fcSeries.map((v,i)=>'L'+xs(focus.trend.length+i).toFixed(1)+' '+ys(v).toFixed(1)).join(' ');
+    const area=histLine+` L${xs(focus.trend.length-1).toFixed(1)} ${pt+ih} L${pl} ${pt+ih} Z`;
+    const divX=xs(focus.trend.length-1);
+    let grid='';for(let g=0;g<=4;g++){const y=pt+(g/4)*ih;grid+=`<line x1="${pl}" y1="${y}" x2="${w-pr}" y2="${y}" stroke="rgba(255,255,255,.05)"/><text x="${pl-7}" y="${y+3}" text-anchor="end" fill="#475569" font-size="9" font-family="JetBrains Mono">${Math.round(max-(g/4)*max)}</text>`;}
+    return `<svg viewBox="0 0 ${w} ${h}" class="w-full h-full" preserveAspectRatio="none">
+      <defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".32"/><stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/></linearGradient></defs>
+      ${grid}
+      <rect x="${divX}" y="${pt}" width="${(w-pr-divX).toFixed(1)}" height="${ih}" fill="rgba(99,102,241,0.06)"/>
+      <text x="${divX+8}" y="${pt-6}" fill="#818cf8" font-size="9" font-family="Inter" font-weight="600">PROJEÇÃO 7 DIAS</text>
+      <path d="${area}" fill="url(#fg)"/>
+      <path d="${histLine}" fill="none" stroke="#38bdf8" stroke-width="2"/>
+      <path d="${fcLine}" fill="none" stroke="#818cf8" stroke-width="2" stroke-dasharray="5 4"/>
+      <line x1="${divX}" y1="${pt}" x2="${divX}" y2="${pt+ih}" stroke="#818cf8" stroke-width="1" stroke-dasharray="2 3" opacity=".6"/>
+    </svg>`;
+  })();
+
+  const rupRows = ruptureRisk.map(s=>`
+    <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-white/[.03] transition border-b border-white/5">
+      <div class="h-7 w-7 rounded-md bg-red-500/12 grid place-items-center shrink-0"><i data-lucide="${CATEGORY_IC[s.category]||'package'}" class="w-3.5 h-3.5 text-red-400"></i></div>
+      <div class="min-w-0 flex-1"><p class="text-[12px] text-slate-200 truncate">${s.name}</p><p class="text-[10px] text-slate-600 truncate">${s.dest.name} · ${s.supplier}</p></div>
+      <div class="text-right shrink-0"><p class="text-[12px] font-mono font-bold text-red-400">${s.coverage}d</p><p class="text-[9px] text-slate-600">cobertura</p></div>
+    </div>`).join('');
+
+  return `
+  <div class="fade-up">
+    <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight">Inteligência de Estoque</h1>
+        <p class="text-[13px] text-slate-500 mt-1">Predição de ruptura · overstock · recomendações inferidas pelo motor preditivo</p>
+      </div>
+      <div class="flex items-center gap-2 text-[11px] text-slate-500">
+        <i data-lucide="brain-circuit" class="w-4 h-4 text-brand-400"></i> Motor preditivo · <span class="text-emerald-400">${recs.length} recomendações ativas</span>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4 mb-5">
+      ${panel('Projeção de consumo vs. estoque', focus.name+' · histórico 14 dias + projeção 7 dias',
+        `<div class="p-5 h-[260px]">${forecastChart}</div>`,
+        `<span class="text-[11px] flex items-center gap-3"><span class="flex items-center gap-1.5 text-slate-400"><span class="h-1.5 w-4 rounded bg-brand-400"></span>histórico</span><span class="flex items-center gap-1.5 text-slate-400"><span class="h-1.5 w-4 rounded border-2 border-dashed border-indigo-400"></span>projeção</span></span>`
+      ).replace('rounded-xl','rounded-xl lg:col-span-2')}
+
+      ${panel('Risco de ruptura · 7 dias','SKUs em colapso iminente',
+        `<div>${rupRows}</div>`,
+        `<span class="text-[10px] text-red-400 font-semibold">${ruptureRisk.length} SKUs</span>`)}
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-4 mb-5">
+      ${panel('Overstock detectado','Capital de giro retido em excesso',
+        `<div>${overstock.map(s=>`
+          <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-white/[.03] transition border-b border-white/5">
+            <div class="h-7 w-7 rounded-md bg-indigo-500/12 grid place-items-center shrink-0"><i data-lucide="${CATEGORY_IC[s.category]||'package'}" class="w-3.5 h-3.5 text-indigo-300"></i></div>
+            <div class="min-w-0 flex-1"><p class="text-[12px] text-slate-200 truncate">${s.name}</p><p class="text-[10px] text-slate-600">${s.dest.name} · ${BRL(s.value)} retidos</p></div>
+            <span class="text-[11px] font-mono text-indigo-300 shrink-0">${s.coverage}d</span>
+          </div>`).join('')}</div>`)}
+
+      ${panel('Slow-moving','Materiais com rotatividade abaixo do esperado',
+        `<div>${slowMoving.map(s=>`
+          <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-white/[.03] transition border-b border-white/5">
+            <div class="h-7 w-7 rounded-md bg-amber-500/12 grid place-items-center shrink-0"><i data-lucide="${CATEGORY_IC[s.category]||'package'}" class="w-3.5 h-3.5 text-amber-400"></i></div>
+            <div class="min-w-0 flex-1"><p class="text-[12px] text-slate-200 truncate">${s.name}</p><p class="text-[10px] text-slate-600">${s.dest.name} · giro ${(30/s.coverage).toFixed(1)}× ao mês</p></div>
+            <span class="text-[11px] font-mono text-amber-400 shrink-0">${s.coverage}d</span>
+          </div>`).join('')}</div>`)}
+    </div>
+
+    <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-3 mt-6 flex items-center gap-2"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-400"></i> Recomendações do motor preditivo</p>
+    <div class="grid lg:grid-cols-2 gap-4 stagger">${recCards}</div>
+  </div>`;
+}
+
+/* ============================================================
+   VIEW: WAR ROOM — UNIFIED VISION
+============================================================ */
+const WARROOM_EVENTS=[
+  ['red','siren','Ruptura iminente · Resina PP injeção · Manaus em 1,8d','Suprimentos'],
+  ['amber','truck','ASN-26-08454 entrou em atraso · ETA recalculada +3d','Logística'],
+  ['brand','bot','Motor disparou 12 follow-ups na régua D-3','Automação'],
+  ['red','shield-alert','Escalada gerencial · PO-2026-4828 (Polimar) 52h sem retorno','Suprimentos'],
+  ['emerald','check-circle-2','SLA recuperado · ElétroSul confirmou aceite de 3 ordens','Fornecedores'],
+  ['amber','flame','Compra emergencial aprovada · Rolamento 6204-ZZ (R$ 84k)','Diretoria'],
+  ['indigo','bell-ring','Diretoria notificada · impacto financeiro > R$ 200k','Sala de Operações'],
+  ['red','package-x','Linha 3 parada em Betim · falta de Vedação NBR 70','Operação'],
+  ['brand','database','SAP sincronizado · 47 ASNs atualizados','Integração'],
+  ['amber','activity','Spike de consumo +18% · Filme stretch CD São Paulo','Estoque'],
+  ['emerald','truck','ASN-26-08418 chegou ao CD Salvador · descarga iniciada','Logística'],
+  ['red','clock','PO-2026-4849 sem aceite há 36h · risco escalado para Alto','Suprimentos'],
+];
+function warroomEvent(useNow){
+  const e=pick(WARROOM_EVENTS);
+  const [c,ic,txt,src]=e;
+  const C={red:'text-red-400 bg-red-500/12',amber:'text-amber-400 bg-amber-500/12',brand:'text-brand-400 bg-brand-500/12',emerald:'text-emerald-400 bg-emerald-500/12',indigo:'text-indigo-300 bg-indigo-500/12'};
+  const now=useNow?new Date():new Date(Date.now()-Math.floor(rnd()*1800000));
+  return `<div class="tick-in flex gap-3 px-4 py-2.5 border-b border-white/5">
+    <span class="font-mono text-[10px] text-slate-600 pt-0.5 whitespace-nowrap">${pad2(now.getHours())}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}</span>
+    <div class="h-6 w-6 rounded grid place-items-center ${C[c]} shrink-0"><i data-lucide="${ic}" class="w-3 h-3"></i></div>
+    <div class="min-w-0 flex-1"><p class="text-[12px] text-slate-200 leading-snug">${txt}</p><p class="text-[10px] text-slate-600 mt-0.5">${src}</p></div>
+  </div>`;
+}
+
+function viewWarroom(){
+  const critSKUs = SKUS.filter(s=>s.status==='crit').slice(0,7);
+  const impacts = critSKUs.map(s=>ri(45,420)*1000);
+  const totalImpact = impacts.reduce((a,v)=>a+v,0);
+  const chainRows = critSKUs.map((s,i)=>{
+    const po = POS.find(p=>p.supplier===s.supplier && p.status==='delayed') || POS.find(p=>p.supplier===s.supplier);
+    const slaSup = SUP_PERF.find(x=>x.name===s.supplier);
+    return `
+    <div class="grid grid-cols-12 gap-3 items-center px-4 py-3 hover:bg-white/[.02] transition border-b border-white/5">
+      <div class="col-span-3 flex items-center gap-2 min-w-0">
+        <div class="h-7 w-7 rounded-md bg-red-500/12 grid place-items-center shrink-0"><i data-lucide="${CATEGORY_IC[s.category]||'package'}" class="w-3.5 h-3.5 text-red-400"></i></div>
+        <div class="min-w-0"><p class="text-[12px] font-medium text-slate-100 truncate">${s.name}</p><p class="text-[10px] text-slate-600 font-mono">${s.sku} · ${s.coverage}d cob.</p></div>
+      </div>
+      <div class="col-span-2"><p class="text-[11px] text-brand-300 font-mono">${po?po.po:'—'}</p><p class="text-[10px] text-slate-600">${po?po.dueStr:''}</p></div>
+      <div class="col-span-2 min-w-0"><p class="text-[11px] text-slate-300 truncate">${s.supplier}</p><p class="text-[10px] text-slate-600">SLA ${slaSup?slaSup.sla.toFixed(0):'—'}%</p></div>
+      <div class="col-span-2 min-w-0"><p class="text-[11px] text-slate-300 truncate">${s.dest.name}</p><p class="text-[10px] text-slate-600 truncate">${s.dest.city}</p></div>
+      <div class="col-span-2 text-right"><p class="text-[12px] font-mono font-bold text-red-400">${BRL(impacts[i])}</p><p class="text-[10px] text-slate-600">impacto/dia</p></div>
+      <div class="col-span-1 text-right"><span class="h-2 w-2 rounded-full bg-red-400 pulse-red inline-block"></span></div>
+    </div>`;
+  }).join('');
+
+  const finSeries = Array.from({length:30},(_,i)=> Math.round(80+rnd()*150 + (i>20?60:0)));
+  const labs30 = Array.from({length:30},(_,i)=>i%5===0?'D-'+(29-i):'');
+
+  const bigKPIs=[
+    {ic:'alarm-clock',c:'text-red-400',v:'187',l:'POs em atraso',sub:'+24 vs. 7d'},
+    {ic:'alert-octagon',c:'text-red-400',v:String(critSKUs.length),l:'SKUs em ruptura',sub:'iminentes 7d'},
+    {ic:'building-2',c:'text-amber-400',v:String(SUP_PERF.filter(s=>s.sla<85).length),l:'Fornecedores em alerta',sub:'SLA < 85%'},
+    {ic:'warehouse',c:'text-amber-400',v:String(WH_UNITS.filter(u=>u.sev!=='Saudável').length),l:'Unidades impactadas',sub:'de 10 totais'},
+    {ic:'banknote',c:'text-red-400',v:'R$ '+(Math.round(totalImpact/100000)/10).toFixed(1)+' M',l:'Impacto financeiro/dia',sub:'estimativa motor'},
+    {ic:'timer',c:'text-emerald-400',v:'11 min',l:'Tempo médio de reação',sub:'meta 15 min'},
+  ];
+
+  const supGauges = SUP_PERF.filter(s=>s.sla<85).slice(0,4).map(s=>{
+    const pct=Math.round(s.sla), col=pct>=85?'#34d399':pct>=70?'#fbbf24':'#f87171';
+    const C=2*Math.PI*22;
+    return `<div class="rounded-lg border border-white/5 bg-ink-900 p-3 flex items-center gap-3">
+      <svg viewBox="0 0 56 56" class="w-12 h-12 shrink-0">
+        <circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="5"/>
+        <circle cx="28" cy="28" r="22" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${(C-(pct/100)*C).toFixed(1)}" transform="rotate(-90 28 28)"/>
+        <text x="28" y="32" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="700">${pct}</text>
+      </svg>
+      <div class="min-w-0 flex-1"><p class="text-[12px] font-medium text-slate-100 truncate">${s.name}</p><p class="text-[10px] text-slate-500">Atraso médio <span class="font-mono ${s.delay>3?'text-red-400':'text-slate-400'}">${s.delay}d</span> · resp. ${s.resp}h</p></div>
+    </div>`;
+  }).join('');
+
+  const critUnits = WH_UNITS.filter(u=>u.sev!=='Saudável').slice(0,4).map(u=>`
+    <div class="rounded-lg border border-white/5 bg-ink-900 p-3">
+      <div class="flex items-center justify-between mb-2">
+        <div class="min-w-0"><p class="text-[12px] font-semibold text-slate-100 truncate">${u.name}</p><p class="text-[10px] text-slate-600">${u.city}</p></div>
+        <span class="text-[11px] font-bold ${u.sev==='Crítico'?'text-red-400':'text-amber-400'} font-mono">${u.risk}%</span>
+      </div>
+      <div class="h-1.5 rounded-full bg-white/5 overflow-hidden"><div class="h-full rounded-full" style="width:${u.risk}%;background:${u.sev==='Crítico'?'#f87171':'#fbbf24'}"></div></div>
+      <p class="text-[10px] text-slate-500 mt-2">${u.crit} SKU crit. · ${u.inboundLate} ASN atras.</p>
+    </div>`).join('');
+
+  return `
+  <div class="fade-up">
+    <div class="flex items-end justify-between flex-wrap gap-3 mb-5">
+      <div>
+        <div class="flex items-center gap-3 flex-wrap">
+          <span class="h-2 w-2 rounded-full bg-red-400 pulse-red"></span>
+          <h1 class="text-xl font-bold text-white tracking-tight">Sala de Operações — War Room</h1>
+          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-red-500/15 text-red-300 border border-red-500/25">LIVE · NÍVEL 2</span>
+        </div>
+        <p class="text-[13px] text-slate-500 mt-1">Visão unificada compras × almoxarifado · cadeia de impacto operacional em tempo real</p>
+      </div>
+      <div class="flex items-center gap-2 text-[11px] text-slate-400">
+        <i data-lucide="radio" class="w-4 h-4 text-emerald-400"></i> Stream operacional · 24 fontes integradas
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-5 stagger">
+      ${bigKPIs.map(k=>`
+        <div class="kpi-card rounded-xl border border-white/5 bg-gradient-to-b from-ink-850 to-ink-900 p-4">
+          <div class="flex items-center gap-2 text-[10px] text-slate-500 uppercase tracking-wider"><i data-lucide="${k.ic}" class="w-3.5 h-3.5 ${k.c}"></i>${k.l}</div>
+          <p class="text-2xl font-bold text-white tracking-tight mt-2">${k.v}</p>
+          <p class="text-[10px] text-slate-500 mt-1">${k.sub}</p>
+        </div>`).join('')}
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4 mb-5">
+      ${panel('Cadeia de impacto operacional','SKU crítico → PO → fornecedor → unidade → impacto financeiro estimado',
+        `<div>
+          <div class="grid grid-cols-12 gap-3 px-4 py-2.5 text-[10px] uppercase tracking-wider text-slate-600 border-b border-white/5 bg-ink-800/40">
+            <div class="col-span-3">Material</div><div class="col-span-2">PO vinculada</div><div class="col-span-2">Fornecedor</div><div class="col-span-2">Unidade impactada</div><div class="col-span-2 text-right">Impacto / dia</div><div class="col-span-1"></div>
+          </div>
+          ${chainRows}
+          <div class="px-4 py-3 flex items-center justify-between bg-ink-800/40 border-t border-white/5">
+            <span class="text-[11px] text-slate-500">Impacto financeiro consolidado / dia</span>
+            <span class="text-[15px] font-bold font-mono text-red-400">${BRL(totalImpact)}</span>
+          </div>
+        </div>`,
+        `<button class="text-[11px] font-semibold bg-red-500/15 text-red-300 border border-red-500/25 hover:bg-red-500/25 rounded-lg px-3 py-1.5 flex items-center gap-1.5"><i data-lucide="phone" class="w-3 h-3"></i> Acionar war room</button>`
+      ).replace('rounded-xl','rounded-xl lg:col-span-2')}
+
+      ${panel('Stream de eventos','Sinais operacionais ao vivo',
+        `<div id="warFeed" class="max-h-[440px] overflow-y-auto"></div>`,
+        `<span class="text-[10px] font-mono text-slate-600 flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-brand-400 pulse-amber"></span>LIVE</span>`)}
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-4 mb-5">
+      ${panel('Impacto financeiro acumulado','Estimativa motor · últimos 30 dias',
+        `<div class="p-5 h-[200px]">${areaChart(finSeries,{labels:labs30,suffix:'k',max:Math.max(...finSeries)*1.2})}</div>`,
+        `<span class="text-[11px] text-red-400 font-semibold">R$ ${(finSeries.reduce((a,v)=>a+v,0)/1000).toFixed(1)} M acumulado</span>`
+      ).replace('rounded-xl','rounded-xl lg:col-span-2')}
+
+      ${panel('Unidades em alerta','Risco operacional ativo',
+        `<div class="p-3 space-y-2">${critUnits}</div>`)}
+    </div>
+
+    ${panel('Fornecedores em zona crítica','SLA < 85% · ação direta requerida',
+      `<div class="grid md:grid-cols-2 xl:grid-cols-4 gap-3 p-4">${supGauges}</div>`,
+      `<span class="text-[10px] text-amber-400 font-semibold">${SUP_PERF.filter(s=>s.sla<85).length} em alerta</span>`)}
+  </div>`;
+}
+
+/* ============================================================
+   ROUTER + INTERACTIONS
+============================================================ */
+const VIEWS={dashboard:viewDashboard,followup:viewFollowup,units:viewUnits,automation:viewAutomation,suppliers:viewSuppliers,warehouse:viewWarehouse,warehouseMap:viewWarehouseMap,inbound:viewInbound,intel:viewIntel,warroom:viewWarroom};
+const CRUMB={dashboard:'Painel Executivo',followup:'Follow-up de Compras',units:'Monitoramento Multi-Unidade',automation:'Fluxo de Automação',suppliers:'Performance de Fornecedores',warehouse:'Controle de Almoxarifado',warehouseMap:'Mapa Operacional do Almoxarifado',inbound:'Logística de Entrada',intel:'Inteligência de Estoque',warroom:'Sala de Operações — War Room'};
+let current=null;
+
+function setView(name){
+  if(!VIEWS[name]) return;
+  if(logTimer){clearInterval(logTimer);logTimer=null;}
+  if(window.warroomTimer){clearInterval(window.warroomTimer);window.warroomTimer=null;}
+  document.querySelectorAll('.navlink').forEach(b=>b.classList.toggle('active', b.dataset.nav===name));
+  const crumbEl=document.getElementById('crumb'); if(crumbEl) crumbEl.textContent=CRUMB[name];
+  const sk=document.getElementById('skeleton');
+  document.querySelectorAll('[data-view-section]').forEach(s=>s.classList.remove('active'));
+  if(sk) sk.classList.remove('hidden');
+  const mainEl=document.getElementById('main'); if(mainEl) mainEl.scrollTop=0;
+  setTimeout(()=>{
+    try{
+      const sec=document.querySelector(`[data-view-section="${name}"]`);
+      sec.innerHTML=VIEWS[name]();
+      if(sk) sk.classList.add('hidden');
+      sec.classList.add('active');
+      current=name;
+      icons();
+      bindViewEvents(name);
+    }catch(err){ console.error('Falha ao renderizar a view',name,err); if(sk) sk.classList.add('hidden'); }
+  }, 420);
+}
+
+function bindViewEvents(name){
+  if(name==='followup'){
+    const body=document.getElementById('foBody');
+    document.querySelectorAll('.fochip').forEach(c=>c.addEventListener('click',()=>{foFilter=c.dataset.fo;body.innerHTML=renderFollowRows();icons();rebindRows();
+      document.querySelectorAll('.fochip').forEach(x=>{const a=x.dataset.fo===foFilter;x.className='fochip text-[12px] font-medium px-3 py-1.5 rounded-lg border transition '+(a?'bg-brand-500/15 text-brand-300 border-brand-500/30':'bg-ink-850 text-slate-400 border-white/5 hover:border-white/15');});
+    }));
+    const si=document.getElementById('foSearch');
+    si.addEventListener('input',e=>{foSearch=e.target.value;body.innerHTML=renderFollowRows();icons();rebindRows();si.focus();});
+    rebindRows();
+  }
+  if(name==='automation'){
+    const feed=document.getElementById('logFeed');
+    for(let i=0;i<6;i++) feed.insertAdjacentHTML('beforeend',logLine());
+    icons();
+    logTimer=setInterval(()=>{
+      feed.insertAdjacentHTML('afterbegin',logLine());
+      if(feed.children.length>40) feed.removeChild(feed.lastChild);
+      icons();
+    }, 3200);
+  }
+  if(name==='warehouse'){
+    const refresh=()=>{document.getElementById('wBody').innerHTML=wRows();icons();bindWRows();};
+    document.getElementById('wSearch').addEventListener('input',e=>{wFilter.q=e.target.value;refresh();document.getElementById('wSearch').focus();});
+    document.getElementById('wUnit').addEventListener('change',e=>{wFilter.unit=e.target.value;refresh();});
+    document.getElementById('wRisk').addEventListener('change',e=>{wFilter.risk=e.target.value;refresh();});
+    document.getElementById('wSup').addEventListener('change',e=>{wFilter.sup=e.target.value;refresh();});
+    document.getElementById('wCrit').addEventListener('change',e=>{wFilter.critOnly=e.target.checked;refresh();});
+    bindWRows();
+  }
+  if(name==='warroom'){
+    const wfeed=document.getElementById('warFeed');
+    for(let k=0;k<8;k++) wfeed.insertAdjacentHTML('beforeend', warroomEvent(false));
+    icons();
+    window.warroomTimer=setInterval(()=>{
+      wfeed.insertAdjacentHTML('afterbegin', warroomEvent(true));
+      if(wfeed.children.length>40) wfeed.removeChild(wfeed.lastChild);
+      icons();
+    }, 3800);
+  }
+}
+function bindWRows(){
+  document.querySelectorAll('[data-wrow]').forEach(r=>{
+    r.addEventListener('click',e=>{
+      if(e.target.closest('.actbtn'))return;
+      const id=r.dataset.wrow, det=document.querySelector(`[data-wdet="${id}"]`);
+      r.classList.toggle('row-open'); det.classList.toggle('hidden');
+    });
+  });
+  document.querySelectorAll('[data-wdet] .actbtn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();toast(b.dataset.act,'warn');}));
+}
+function rebindRows(){
+  document.querySelectorAll('[data-row]').forEach(r=>{
+    r.addEventListener('click',e=>{
+      if(e.target.closest('.actbtn'))return;
+      const id=r.dataset.row, det=document.querySelector(`[data-detail="${id}"]`);
+      r.classList.toggle('row-open'); det.classList.toggle('hidden');
+    });
+  });
+  document.querySelectorAll('.actbtn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();toast(b.dataset.act);}));
+}
+
+/* Toasts */
+function toast(msg, type='ok'){
+  const colors={ok:'border-emerald-500/30 text-emerald-300',warn:'border-amber-500/30 text-amber-300',err:'border-red-500/30 text-red-300'};
+  const ic={ok:'check-circle-2',warn:'alert-triangle',err:'alert-octagon'};
+  const el=document.createElement('div');
+  el.className=`toast-in glass border ${colors[type]} bg-ink-850/95 rounded-xl px-4 py-3 shadow-card flex items-start gap-3`;
+  el.innerHTML=`<i data-lucide="${ic[type]}" class="w-4 h-4 mt-0.5 shrink-0"></i><div class="min-w-0"><p class="text-[12px] font-semibold text-slate-100">${msg}</p><p class="text-[10px] text-slate-500 mt-0.5">${new Date().toLocaleTimeString('pt-BR')} · ação registrada no histórico</p></div>`;
+  document.getElementById('toastWrap').appendChild(el);
+  icons();
+  setTimeout(()=>{el.style.transition='opacity .4s, transform .4s';el.style.opacity='0';el.style.transform='translateX(20px)';setTimeout(()=>el.remove(),400);}, 4200);
+}
+
+/* Notifications bell */
+function renderBell(){
+  const C={red:'text-red-400 bg-red-500/12',amber:'text-amber-400 bg-amber-500/12',emerald:'text-emerald-400 bg-emerald-500/12',brand:'text-brand-400 bg-brand-500/12'};
+  document.getElementById('bellList').innerHTML=NOTIFS.map(n=>`
+    <div class="flex gap-3 px-4 py-3 hover:bg-white/[.03] transition cursor-pointer">
+      <div class="h-8 w-8 rounded-lg grid place-items-center ${C[n.c]} shrink-0"><i data-lucide="${n.ic}" class="w-4 h-4"></i></div>
+      <div class="min-w-0 flex-1"><p class="text-[12px] font-semibold text-slate-200">${n.t}</p><p class="text-[11px] text-slate-500 mt-0.5 leading-snug">${n.d}</p><p class="text-[10px] text-slate-600 mt-1">${n.time}</p></div>
+    </div>`).join('');
+  icons();
+}
+
+/* Boot */
+function boot(){
+  if(window.__procurlyBooted) return; window.__procurlyBooted=true;
+
+  // 1) critical path FIRST — render landing view + wire navigation (must never be blocked by icons)
+  try{
+    const sec=document.querySelector('[data-view-section="dashboard"]');
+    sec.innerHTML=viewDashboard();
+    sec.classList.add('active');
+    current='dashboard';
+  }catch(err){ console.error('Erro no render inicial',err); }
+
+  document.querySelectorAll('.navlink').forEach(b=>b.addEventListener('click',()=>{ setView(b.dataset.nav); closeSidebar(); }));
+
+  // 2) chrome
+  try{ renderBell(); }catch(e){}
+
+  const bellBtn=document.getElementById('bellBtn'),bellMenu=document.getElementById('bellMenu');
+  bellBtn.addEventListener('click',e=>{e.stopPropagation();bellMenu.classList.toggle('hidden');});
+  document.addEventListener('click',e=>{if(!bellMenu.contains(e.target)&&!bellBtn.contains(e.target))bellMenu.classList.add('hidden');});
+
+  const sidebar=document.getElementById('sidebar'),backdrop=document.getElementById('backdrop');
+  document.getElementById('menuBtn').addEventListener('click',()=>{sidebar.classList.remove('-translate-x-full');backdrop.classList.remove('hidden');});
+  backdrop.addEventListener('click',closeSidebar);
+  window.closeSidebar=()=>{if(window.innerWidth<1024){sidebar.classList.add('-translate-x-full');backdrop.classList.add('hidden');}};
+
+  document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();const gs=document.getElementById('globalSearch'); if(gs) gs.focus();}});
+
+  const tick=()=>{const d=new Date();const s=pad2(d.getHours())+':'+pad2(d.getMinutes())+':'+pad2(d.getSeconds());const sc=document.getElementById('syncClock');if(sc)sc.textContent=s;};
+  tick(); setInterval(tick,1000);
+
+  // 3) icons LAST and crash-proof — also retried on window 'load' once the CDN is ready
+  icons();
+
+  setTimeout(()=>toast('Atraso detectado — PO-2026-4807 (Metalúrgica Andrade)','err'),3000);
+  setTimeout(()=>toast('Follow-up automático disparado para 18 fornecedores','ok'),9000);
+  setTimeout(()=>toast('Ruptura de estoque prevista — Planta Manaus em 3 dias','warn'),16000);
+}
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
+else boot();
+</script>
+</body>
+</html>
